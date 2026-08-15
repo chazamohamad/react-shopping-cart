@@ -32,7 +32,9 @@ function Home() {
   useEffect(() => {
     async function getProducts() {
       try {
-        const response = await fetch("https://dummyjson.com/products");
+        const response = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/products`,
+        );
 
         if (!response.ok) {
           throw new Error("Failed to fetch products");
