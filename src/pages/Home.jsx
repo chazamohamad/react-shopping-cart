@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 
-import Product from "./Product";
-import { useCart } from "./CartContext";
+import Product from "./Product.jsx";
+import { useCart } from "./CartContext.jsx";
 
 function Home() {
   // PRODUCTS STATE
