@@ -8,7 +8,7 @@ function Navbar() {
     >
       <div className="container">
         <NavLink className="navbar-brand fw-bold fs-4" to="/home">
-          MyWebsite
+          Fake Store
         </NavLink>
 
         <button
@@ -23,8 +23,8 @@ function Navbar() {
         <div className="collapse navbar-collapse" id="mainNavbar">
           <ul className="navbar-nav ms-auto gap-lg-3">
             <li className="nav-item">
-              <NavLink className="nav-link" to="/home">
-                Home
+              <NavLink className="nav-link" to="/shop">
+                Shop
               </NavLink>
             </li>
 

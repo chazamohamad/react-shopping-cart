@@ -4,7 +4,7 @@ import { Link } from "react-router";
 import Product from "./Product.jsx";
 import { useCart } from "./CartContext.jsx";
 
-function Home() {
+function Shop() {
   // PRODUCTS STATE
   const [products, setProducts] = useState([]);
 
@@ -202,4 +202,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Shop;
