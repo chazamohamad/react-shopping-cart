@@ -137,6 +137,24 @@ function Cart() {
               Total: ${totalPrice.toFixed(2)}
             </h2>
           </div>
+          <Link
+            to="/shop"
+            className="
+    inline-block
+    border
+    border-blue-600
+    text-blue-600
+    px-6
+    py-3
+    rounded-lg
+    hover:bg-blue-600
+    hover:text-white
+    transition
+    mt-6
+  "
+          >
+            Back to Shop
+          </Link>
         </>
       )}
     </main>

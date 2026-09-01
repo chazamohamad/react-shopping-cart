@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
-import { useCart } from "./CartContext";
+import axios from "axios";
+
+import { useCart } from "./CartContext.jsx";
 
 function ProductDetails() {
   const { id } = useParams();
@@ -16,19 +18,13 @@ function ProductDetails() {
   useEffect(() => {
     async function getProductDetails() {
       try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_BASE_URL}/products/${id}`,
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/products/${id}`,
         );
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch product details");
-        }
-
-        const data = await response.json();
-
-        setProduct(data);
+        setProduct(response.data);
       } catch (error) {
-        setError(error.message);
+        setError("Failed to fetch product details");
       } finally {
         setLoading(false);
       }
@@ -39,18 +35,69 @@ function ProductDetails() {
 
   if (loading) {
     return (
-      <p className="text-center mt-10 text-gray-500">
+      <p
+        className="
+        text-center
+        mt-10
+        text-gray-500
+      "
+      >
         Loading product details...
       </p>
     );
   }
 
   if (error) {
-    return <p className="text-center mt-10 text-red-600">{error}</p>;
+    return (
+      <p
+        className="
+        text-center
+        mt-10
+        text-red-600
+      "
+      >
+        {error}
+      </p>
+    );
   }
 
+  const renderStars = (rating) => {
+    const stars = [];
+
+    for (let i = 1; i <= 5; i++) {
+      const percentage = Math.min(Math.max(rating - (i - 1), 0), 1) * 100;
+
+      stars.push(
+        <span
+          key={i}
+          className="text-2xl"
+          style={{
+            background: `linear-gradient(
+            90deg,
+            #facc15 ${percentage}%,
+            #d1d5db ${percentage}%
+          )`,
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+          }}
+        >
+          ★
+        </span>,
+      );
+    }
+
+    return stars;
+  };
+
   return (
-    <main className="max-w-7xl mx-auto px-4 py-10">
+    <main
+      className="
+        max-w-7xl
+        mx-auto
+        px-6
+        py-10
+      "
+    >
       <div
         className="
           grid
@@ -59,21 +106,23 @@ function ProductDetails() {
           items-center
         "
       >
-        {/* IMAGE */}
+        {/* PRODUCT IMAGE */}
 
         <div>
           <img
-            src={product.thumbnail}
+            src={product.image}
             alt={product.title}
             className="
               w-full
               h-[450px]
-              object-contain
+              object-cover
+              rounded-2xl
+              shadow-lg
             "
           />
         </div>
 
-        {/* DETAILS */}
+        {/* PRODUCT DETAILS */}
 
         <div>
           <h1
@@ -90,86 +139,91 @@ function ProductDetails() {
           <p
             className="
               text-gray-600
-              mb-5
+              text-lg
+              mb-6
             "
           >
-            {product.description}
+            {product.desc}
           </p>
 
-          <h3
+          <div
+            className="
+    flex
+    items-center
+    gap-2
+    mb-5
+  "
+          >
+            <div className="text-2xl">{renderStars(product.review)}</div>
+
+            <span className="text-gray-600">({product.review})</span>
+          </div>
+
+          <h2
             className="
               text-3xl
               font-bold
               text-green-600
-              mb-6
+              mb-8
             "
           >
             ${product.price}
-          </h3>
+          </h2>
 
-          <div className="space-y-3 mb-6">
-            <p>
-              <strong>Rating:</strong> {product.rating}
-            </p>
+          {/* BUTTONS */}
 
-            <p>
-              <strong>Category:</strong> {product.category}
-            </p>
+          <div
+            className="
+              flex
+              gap-4
+            "
+          >
+            {/* ADD TO CART */}
 
-            <p>
-              <strong>Stock:</strong> {product.stock}
-            </p>
+            <button
+              className="
+                bg-green-600
+                text-white
+                px-6
+                py-3
+                rounded-lg
+                hover:bg-green-700
+                transition
+              "
+              onClick={() =>
+                addToCart({
+                  id: product._id,
 
-            {product.brand && (
-              <p>
-                <strong>Brand:</strong> {product.brand}
-              </p>
-            )}
+                  title: product.title,
+
+                  price: product.price,
+
+                  image: product.image,
+                })
+              }
+            >
+              Add to Cart
+            </button>
+
+            {/* BACK TO SHOP */}
+
+            <Link
+              to="/shop"
+              className="
+                border
+                border-blue-600
+                text-blue-600
+                px-6
+                py-3
+                rounded-lg
+                hover:bg-blue-600
+                hover:text-white
+                transition
+              "
+            >
+              Back to Shop
+            </Link>
           </div>
-
-          <button
-            className="
-              bg-green-600
-              text-white
-              px-6
-              py-3
-              rounded-lg
-              hover:bg-green-700
-              transition
-              mr-3
-            "
-            onClick={() =>
-              addToCart({
-                id: product.id,
-
-                title: product.title,
-
-                price: product.price,
-
-                image: product.thumbnail,
-              })
-            }
-          >
-            Add to Cart
-          </button>
-
-          <Link
-            to="/shop"
-            className="
-              inline-block
-              border
-              border-blue-600
-              text-blue-600
-              px-6
-              py-3
-              rounded-lg
-              hover:bg-blue-600
-              hover:text-white
-              transition
-            "
-          >
-            Back to Products
-          </Link>
         </div>
       </div>
     </main>

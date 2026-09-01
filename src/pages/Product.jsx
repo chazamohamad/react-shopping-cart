@@ -1,120 +1,150 @@
 import { Link } from "react-router";
 import { useCart } from "./CartContext";
 
-function Product({ id, title, description, price, image }) {
+function Product({ _id, title, desc, price, image, review }) {
   const { addToCart } = useCart();
 
   return (
-    <div className="w-full md:w-1/2 lg:w-1/3 p-3">
+    <div className="w-full">
       <div
         className="
           bg-white
-          rounded-xl
-          shadow-md
+          rounded-2xl
+          shadow-lg
           overflow-hidden
           h-full
           flex
           flex-col
+          border
+          hover:shadow-xl
+          transition
+          duration-300
         "
       >
         {/* IMAGE */}
 
-        <img
-          src={image}
-          alt={title}
-          className="
-            w-full
-            h-56
-            object-contain
-            p-5
-          "
-        />
+        <div className="w-full h-64 bg-gray-100 flex items-center justify-center">
+          <img
+            src={image}
+            alt={title}
+            className="
+              w-full
+              h-full
+              object-cover
+            "
+          />
+        </div>
 
         {/* CONTENT */}
 
         <div
           className="
-            p-5
+            p-6
             flex
             flex-col
             flex-1
           "
         >
-          <h5
+          {/* TITLE */}
+
+          <h2
             className="
               text-xl
               font-bold
-              mb-3
               text-gray-900
+              mb-3
+              line-clamp-2
             "
           >
             {title}
-          </h5>
+          </h2>
+
+          {/* DESCRIPTION */}
 
           <p
             className="
               text-gray-500
+              text-sm
               mb-4
-              line-clamp-3
+              line-clamp-2
             "
           >
-            {description}
+            {desc}
           </p>
 
-          <h5
+          {/* REVIEW */}
+
+          <div
+            className="
+              flex
+              items-center
+              gap-2
+              mb-3
+            "
+          >
+            <span className="text-yellow-500">⭐</span>
+
+            <span className="text-gray-700">{review}</span>
+          </div>
+
+          {/* PRICE */}
+
+          <h3
             className="
               text-green-600
               font-bold
-              text-xl
-              mt-auto
+              text-2xl
+              mb-5
             "
           >
             ${price}
-          </h5>
+          </h3>
 
-          {/* ADD CART BUTTON */}
+          {/* BUTTONS */}
 
-          <button
-            className="
-              bg-green-600
-              text-white
-              py-2
-              px-4
-              rounded-lg
-              mt-4
-              hover:bg-green-700
-              transition
-            "
-            onClick={() =>
-              addToCart({
-                id,
-                title,
-                price,
-                image,
-              })
-            }
-          >
-            Add to Cart
-          </button>
+          <div className="mt-auto flex flex-col gap-3">
+            {/* ADD CART */}
 
-          {/* DETAILS BUTTON */}
+            <button
+              className="
+                bg-green-600
+                text-white
+                py-3
+                rounded-xl
+                font-semibold
+                hover:bg-green-700
+                transition
+              "
+              onClick={() =>
+                addToCart({
+                  id: _id,
+                  title,
+                  price,
+                  image,
+                })
+              }
+            >
+              Add to Cart
+            </button>
 
-          <Link
-            to={`/product-details/${id}`}
-            className="
-              bg-blue-600
-              text-white
-              text-center
-              py-2
-              px-4
-              rounded-lg
-              mt-3
-              hover:bg-blue-700
-              transition
-            "
-          >
-            View Details
-          </Link>
+            {/* DETAILS */}
+
+            <Link
+              to={`/product-details/${_id}`}
+              className="
+                bg-blue-600
+                text-white
+                text-center
+                py-3
+                rounded-xl
+                font-semibold
+                hover:bg-blue-700
+                transition
+              "
+            >
+              View Details
+            </Link>
+          </div>
         </div>
       </div>
     </div>

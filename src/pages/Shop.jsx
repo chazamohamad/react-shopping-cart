@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router";
+// import { Link } from "react-router";
+// import axios from "axios";
+import API from "../services/api.js";
 
 import Product from "./Product.jsx";
-import { useCart } from "./CartContext.jsx";
 
 function Shop() {
   const [products, setProducts] = useState([]);
@@ -15,38 +16,22 @@ function Shop() {
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { totalItems } = useCart();
-
   const productsPerPage = 6;
+
+  // GET PRODUCTS FROM BACKEND
 
   useEffect(() => {
     async function getProducts() {
       try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_BASE_URL}/products`,
-        );
+        // const response = await axios.get(
+        //   `${import.meta.env.VITE_API_URL}/api/products`,
+        // );
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch products");
-        }
+        const response = await API.get("/api/products");
 
-        const data = await response.json();
-
-        const selectedProducts = data.products.map((product) => ({
-          id: product.id,
-
-          title: product.title,
-
-          description: product.description,
-
-          price: product.price,
-
-          image: product.thumbnail,
-        }));
-
-        setProducts(selectedProducts);
+        setProducts(response.data);
       } catch (error) {
-        setError(error.message);
+        setError("Failed to fetch products");
       } finally {
         setLoading(false);
       }
@@ -55,9 +40,13 @@ function Shop() {
     getProducts();
   }, []);
 
+  // SEARCH FILTER
+
   const filteredProducts = products.filter((product) =>
     product.title.toLowerCase().includes(searchTerm.toLowerCase()),
   );
+
+  // PAGINATION
 
   const indexOfLastProduct = currentPage * productsPerPage;
 
@@ -71,7 +60,14 @@ function Shop() {
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
   return (
-    <main className="max-w-7xl mx-auto px-4 py-10">
+    <main
+      className="
+        max-w-7xl
+        mx-auto
+        px-6
+        py-10
+      "
+    >
       {/* TITLE + CART */}
 
       <div
@@ -90,20 +86,6 @@ function Shop() {
         >
           Our Products
         </h1>
-
-        <Link
-          to="/cart"
-          className="
-            bg-gray-900
-            text-white
-            px-4
-            py-2
-            rounded-lg
-            hover:bg-gray-700
-          "
-        >
-          🛒 Cart ({totalItems})
-        </Link>
       </div>
 
       {/* SEARCH */}
@@ -118,7 +100,7 @@ function Shop() {
           rounded-lg
           px-4
           py-3
-          mb-8
+          mb-10
           focus:outline-none
           focus:ring-2
           focus:ring-blue-500
@@ -134,36 +116,64 @@ function Shop() {
       {/* LOADING */}
 
       {loading && (
-        <p className="text-center text-gray-500">Loading products...</p>
+        <p
+          className="
+            text-center
+            text-gray-500
+          "
+        >
+          Loading products...
+        </p>
       )}
 
       {/* ERROR */}
 
-      {error && <p className="text-center text-red-600">{error}</p>}
+      {error && (
+        <p
+          className="
+            text-center
+            text-red-600
+          "
+        >
+          {error}
+        </p>
+      )}
+
+      {/* PRODUCTS */}
 
       {!loading && !error && (
         <>
-          {filteredProducts.length > 0 ? (
+          {currentProducts.length > 0 ? (
             <div
               className="
-                  flex
-                  flex-wrap
-                  -mx-3
-                "
+                grid
+                grid-cols-1
+                sm:grid-cols-2
+                lg:grid-cols-3
+                xl:grid-cols-3
+                gap-10
+              "
             >
               {currentProducts.map((product) => (
                 <Product
-                  key={product.id}
-                  id={product.id}
+                  key={product._id}
+                  _id={product._id}
                   title={product.title}
-                  description={product.description}
+                  desc={product.desc}
                   price={product.price}
                   image={product.image}
+                  review={product.review}
                 />
               ))}
             </div>
           ) : (
-            <p className="text-center">No products found.</p>
+            <p
+              className="
+                text-center
+              "
+            >
+              No products found.
+            </p>
           )}
 
           {/* PAGINATION */}
@@ -171,40 +181,42 @@ function Shop() {
           {totalPages > 1 && (
             <div
               className="
-                  flex
-                  justify-center
-                  gap-2
-                  mt-10
-                "
+                flex
+                justify-center
+                gap-3
+                mt-12
+              "
             >
               <button
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
                 className="
-                    px-4
-                    py-2
-                    border
-                    rounded-lg
-                    disabled:opacity-50
-                  "
+                  px-4
+                  py-2
+                  border
+                  rounded-lg
+                  disabled:opacity-50
+                "
               >
                 Previous
               </button>
 
               {Array.from({ length: totalPages }, (_, index) => (
                 <button
-                  key={index + 1}
+                  key={index}
                   onClick={() => setCurrentPage(index + 1)}
                   className={`
                         px-4
                         py-2
-                        rounded-lg
                         border
+                        rounded-lg
+
                         ${
                           currentPage === index + 1
                             ? "bg-blue-600 text-white"
                             : "bg-white"
                         }
+
                       `}
                 >
                   {index + 1}
@@ -215,12 +227,12 @@ function Shop() {
                 disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
                 className="
-                    px-4
-                    py-2
-                    border
-                    rounded-lg
-                    disabled:opacity-50
-                  "
+                  px-4
+                  py-2
+                  border
+                  rounded-lg
+                  disabled:opacity-50
+                "
               >
                 Next
               </button>
