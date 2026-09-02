@@ -1,14 +1,30 @@
 import { useEffect, useState } from "react";
+
 import API from "../services/api";
+
+import Modal from "../components/Modal";
+
+import CreateCategory from "./CreateCategory";
+import EditCategory from "./EditCategory";
 
 function AdminCategories() {
   const [categories, setCategories] = useState([]);
 
   const [loading, setLoading] = useState(true);
 
+  const [showCreateModal, setShowCreateModal] = useState(false);
+
+  const [showEditModal, setShowEditModal] = useState(false);
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const [selectedCategory, setSelectedCategory] = useState(null);
+
   useEffect(() => {
     getCategories();
   }, []);
+
+  // GET ALL CATEGORIES
 
   const getCategories = async () => {
     try {
@@ -22,15 +38,15 @@ function AdminCategories() {
     }
   };
 
-  const deleteCategory = async (id) => {
-    const confirmDelete = window.confirm("Delete category?");
+  // DELETE CATEGORY
 
-    if (!confirmDelete) return;
-
+  const deleteCategory = async () => {
     try {
-      await API.delete(`/api/categories/${id}`);
+      await API.delete(`/api/categories/${selectedCategory._id}`);
 
-      setCategories(categories.filter((category) => category._id !== id));
+      await getCategories();
+
+      setShowDeleteModal(false);
     } catch (error) {
       console.log(error);
     }
@@ -42,24 +58,27 @@ function AdminCategories() {
 
   return (
     <div>
+      {/* HEADER */}
+
       <div
         className="
-        flex
-        justify-between
-        items-center
-        mb-6
-      "
+          flex
+          justify-between
+          items-center
+          mb-6
+        "
       >
         <h1
           className="
-          text-3xl
-          font-bold
-        "
+            text-3xl
+            font-bold
+          "
         >
           Categories Management
         </h1>
 
         <button
+          onClick={() => setShowCreateModal(true)}
           className="
             bg-green-600
             text-white
@@ -72,12 +91,15 @@ function AdminCategories() {
         </button>
       </div>
 
+      {/* TABLE */}
+
       <div
         className="
-        bg-white
-        shadow
-        rounded-xl
-      "
+          bg-white
+          shadow
+          rounded-xl
+          overflow-x-auto
+        "
       >
         <table className="w-full">
           <thead
@@ -103,7 +125,14 @@ function AdminCategories() {
                 <td className="p-4">{category.desc}</td>
 
                 <td className="p-4 space-x-2">
+                  {/* EDIT */}
+
                   <button
+                    onClick={() => {
+                      setSelectedCategory(category);
+
+                      setShowEditModal(true);
+                    }}
                     className="
                       bg-blue-600
                       text-white
@@ -115,8 +144,14 @@ function AdminCategories() {
                     Edit
                   </button>
 
+                  {/* DELETE */}
+
                   <button
-                    onClick={() => deleteCategory(category._id)}
+                    onClick={() => {
+                      setSelectedCategory(category);
+
+                      setShowDeleteModal(true);
+                    }}
                     className="
                       bg-red-600
                       text-white
@@ -133,6 +168,84 @@ function AdminCategories() {
           </tbody>
         </table>
       </div>
+
+      {/* CREATE MODAL */}
+
+      <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)}>
+        <CreateCategory
+          closeModal={() => setShowCreateModal(false)}
+          refreshCategories={getCategories}
+        />
+      </Modal>
+
+      {/* EDIT MODAL */}
+
+      <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)}>
+        {selectedCategory && (
+          <EditCategory
+            category={selectedCategory}
+            closeModal={() => setShowEditModal(false)}
+            refreshCategories={getCategories}
+          />
+        )}
+      </Modal>
+
+      {/* DELETE CONFIRM MODAL */}
+
+      <Modal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
+        <div>
+          <h2
+            className="
+              text-2xl
+              font-bold
+              mb-4
+            "
+          >
+            Delete Category?
+          </h2>
+
+          <p
+            className="
+              mb-6
+              text-gray-600
+            "
+          >
+            This will delete the category and all related products.
+          </p>
+
+          <div
+            className="
+              flex
+              gap-3
+            "
+          >
+            <button
+              onClick={() => setShowDeleteModal(false)}
+              className="
+                bg-gray-300
+                px-5
+                py-2
+                rounded-lg
+              "
+            >
+              Cancel
+            </button>
+
+            <button
+              onClick={deleteCategory}
+              className="
+                bg-red-600
+                text-white
+                px-5
+                py-2
+                rounded-lg
+              "
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

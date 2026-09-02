@@ -1,7 +1,6 @@
 import { Routes, Route } from "react-router";
 
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
+import PublicLayout from "./components/PublicLayout";
 
 import Shop from "./pages/Shop";
 import About from "./pages/About";
@@ -16,18 +15,15 @@ import AdminDashboard from "./admin/AdminDashboard";
 import AdminProducts from "./admin/AdminProducts";
 import AdminCategories from "./admin/AdminCategories";
 import AdminProfile from "./admin/AdminProfile";
-import CreateProduct from "./admin/CreateProduct";
 import AdminRoute from "./admin/AdminRoute";
 
 function App() {
   return (
-    <>
-      <Navbar />
+    <Routes>
+      {/* PUBLIC WEBSITE */}
 
-      <Routes>
-        <Route path="/login" element={<Login />} />
-
-        <Route path="/signup" element={<Signup />} />
+      <Route element={<PublicLayout />}>
+        <Route path="/" element={<Shop />} />
 
         <Route path="/shop" element={<Shop />} />
 
@@ -35,32 +31,34 @@ function App() {
 
         <Route path="/contact" element={<Contact />} />
 
+        <Route path="/login" element={<Login />} />
+
+        <Route path="/signup" element={<Signup />} />
+
         <Route path="/product-details/:id" element={<ProductDetails />} />
 
         <Route path="/cart" element={<Cart />} />
+      </Route>
 
-        <Route
-          path="/admin"
-          element={
-            <AdminRoute>
-              <AdminLayout />
-            </AdminRoute>
-          }
-        >
-          <Route index element={<AdminDashboard />} />
+      {/* ADMIN */}
 
-          <Route path="products" element={<AdminProducts />} />
+      <Route
+        path="/admin"
+        element={
+          <AdminRoute>
+            <AdminLayout />
+          </AdminRoute>
+        }
+      >
+        <Route index element={<AdminDashboard />} />
 
-          <Route path="categories" element={<AdminCategories />} />
+        <Route path="products" element={<AdminProducts />} />
 
-          <Route path="profile" element={<AdminProfile />} />
+        <Route path="categories" element={<AdminCategories />} />
 
-          <Route path="products/create" element={<CreateProduct />} />
-        </Route>
-      </Routes>
-
-      <Footer />
-    </>
+        <Route path="profile" element={<AdminProfile />} />
+      </Route>
+    </Routes>
   );
 }
 

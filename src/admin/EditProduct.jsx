@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import API from "../services/api";
 
-function CreateProduct({ closeModal, refreshProducts }) {
+function EditProduct({ product, closeModal, refreshProducts }) {
   const [categories, setCategories] = useState([]);
 
   const [loading, setLoading] = useState(false);
@@ -10,17 +10,17 @@ function CreateProduct({ closeModal, refreshProducts }) {
   const [error, setError] = useState("");
 
   const [formData, setFormData] = useState({
-    title: "",
+    title: product.title,
 
-    desc: "",
+    desc: product.desc,
 
-    price: "",
+    price: product.price,
 
-    image: "",
+    image: product.image,
 
-    review: "",
+    review: product.review,
 
-    categoryId: "",
+    categoryId: product.category?._id || "",
   });
 
   // GET CATEGORIES
@@ -39,8 +39,6 @@ function CreateProduct({ closeModal, refreshProducts }) {
     }
   };
 
-  // HANDLE INPUTS
-
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -49,33 +47,25 @@ function CreateProduct({ closeModal, refreshProducts }) {
     });
   };
 
-  // CREATE PRODUCT
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     setError("");
 
-    if (!formData.title || !formData.price || !formData.categoryId) {
-      setError("Title, price and category are required");
-
-      return;
-    }
-
     try {
       setLoading(true);
 
-      await API.post("/api/products", formData);
+      await API.put(
+        `/api/products/${product._id}`,
 
-      // refresh table data
+        formData,
+      );
 
       await refreshProducts();
 
-      // close popup
-
       closeModal();
     } catch (error) {
-      setError(error.response?.data?.message || "Failed to create product");
+      setError(error.response?.data?.message || "Failed to update product");
     } finally {
       setLoading(false);
     }
@@ -87,27 +77,17 @@ function CreateProduct({ closeModal, refreshProducts }) {
         className="
           text-2xl
           font-bold
-          mb-6
+          mb-5
         "
       >
-        Create Product
+        Edit Product
       </h2>
 
-      {error && (
-        <p
-          className="
-              text-red-600
-              mb-4
-            "
-        >
-          {error}
-        </p>
-      )}
+      {error && <p className="text-red-600 mb-3">{error}</p>}
 
       <form onSubmit={handleSubmit}>
         <input
           name="title"
-          placeholder="Product title"
           value={formData.title}
           onChange={handleChange}
           className="
@@ -121,7 +101,6 @@ function CreateProduct({ closeModal, refreshProducts }) {
 
         <textarea
           name="desc"
-          placeholder="Description"
           value={formData.desc}
           onChange={handleChange}
           className="
@@ -136,7 +115,6 @@ function CreateProduct({ closeModal, refreshProducts }) {
         <input
           type="number"
           name="price"
-          placeholder="Price"
           value={formData.price}
           onChange={handleChange}
           className="
@@ -150,7 +128,6 @@ function CreateProduct({ closeModal, refreshProducts }) {
 
         <input
           name="image"
-          placeholder="Image URL"
           value={formData.image}
           onChange={handleChange}
           className="
@@ -165,10 +142,7 @@ function CreateProduct({ closeModal, refreshProducts }) {
         <input
           type="number"
           step="0.1"
-          min="0"
-          max="5"
           name="review"
-          placeholder="Review"
           value={formData.review}
           onChange={handleChange}
           className="
@@ -201,24 +175,18 @@ function CreateProduct({ closeModal, refreshProducts }) {
           ))}
         </select>
 
-        <div
-          className="
-            flex
-            gap-3
-          "
-        >
+        <div className="flex gap-3">
           <button
-            type="submit"
             disabled={loading}
             className="
-              bg-green-600
+              bg-blue-600
               text-white
               px-5
               py-2
               rounded-lg
             "
           >
-            {loading ? "Creating..." : "Create"}
+            {loading ? "Updating..." : "Update"}
           </button>
 
           <button
@@ -239,4 +207,4 @@ function CreateProduct({ closeModal, refreshProducts }) {
   );
 }
 
-export default CreateProduct;
+export default EditProduct;

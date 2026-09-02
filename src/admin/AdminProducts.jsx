@@ -1,15 +1,31 @@
 import { useEffect, useState } from "react";
+
 import API from "../services/api";
-import { Link } from "react-router";
+
+import Modal from "../components/Modal";
+import CreateProduct from "./CreateProduct";
+import EditProduct from "./EditProduct";
 
 function AdminProducts() {
   const [products, setProducts] = useState([]);
 
   const [loading, setLoading] = useState(true);
 
+  const [showCreateModal, setShowCreateModal] = useState(false);
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const [selectedProductId, setSelectedProductId] = useState(null);
+
+  const [showEditModal, setShowEditModal] = useState(false);
+
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
   useEffect(() => {
     getProducts();
   }, []);
+
+  // GET PRODUCTS
 
   const getProducts = async () => {
     try {
@@ -23,15 +39,15 @@ function AdminProducts() {
     }
   };
 
+  // DELETE PRODUCT
+
   const deleteProduct = async (id) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete?");
-
-    if (!confirmDelete) return;
-
     try {
       await API.delete(`/api/products/${id}`);
 
       setProducts(products.filter((product) => product._id !== id));
+
+      setShowDeleteModal(false);
     } catch (error) {
       console.log(error);
     }
@@ -43,50 +59,55 @@ function AdminProducts() {
 
   return (
     <div>
+      {/* HEADER */}
+
       <div
         className="
-        flex
-        justify-between
-        items-center
-        mb-6
-      "
+          flex
+          justify-between
+          items-center
+          mb-6
+        "
       >
         <h1
           className="
-          text-3xl
-          font-bold
-        "
+            text-3xl
+            font-bold
+          "
         >
           Products Management
         </h1>
 
-        <Link
-          to="/admin/products/create"
+        <button
+          onClick={() => setShowCreateModal(true)}
           className="
-    bg-green-600
-    text-white
-    px-5
-    py-2
-    rounded-lg
-  "
+            bg-green-600
+            text-white
+            px-5
+            py-2
+            rounded-lg
+            hover:bg-green-700
+          "
         >
           + Create Product
-        </Link>
+        </button>
       </div>
+
+      {/* PRODUCTS TABLE */}
 
       <div
         className="
-        bg-white
-        rounded-xl
-        shadow
-        overflow-x-auto
-      "
+          bg-white
+          rounded-xl
+          shadow
+          overflow-x-auto
+        "
       >
         <table
           className="
-          w-full
-          text-left
-        "
+            w-full
+            text-left
+          "
         >
           <thead
             className="
@@ -115,6 +136,7 @@ function AdminProducts() {
                 <td className="p-4">
                   <img
                     src={product.image}
+                    alt={product.title}
                     className="
                       w-16
                       h-16
@@ -136,26 +158,35 @@ function AdminProducts() {
 
                 <td className="p-4 space-x-2">
                   <button
+                    onClick={() => {
+                      setSelectedProduct(product);
+
+                      setShowEditModal(true);
+                    }}
                     className="
-                      bg-blue-600
-                      text-white
-                      px-3
-                      py-1
-                      rounded
-                    "
+bg-blue-600
+text-white
+px-3
+py-1
+rounded
+"
                   >
                     Edit
                   </button>
 
                   <button
-                    onClick={() => deleteProduct(product._id)}
+                    onClick={() => {
+                      setSelectedProductId(product._id);
+
+                      setShowDeleteModal(true);
+                    }}
                     className="
-                      bg-red-600
-                      text-white
-                      px-3
-                      py-1
-                      rounded
-                    "
+bg-red-600
+text-white
+px-3
+py-1
+rounded
+"
                   >
                     Delete
                   </button>
@@ -165,6 +196,66 @@ function AdminProducts() {
           </tbody>
         </table>
       </div>
+
+      {/* CREATE PRODUCT MODAL */}
+
+      <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)}>
+        <CreateProduct
+          closeModal={() => setShowCreateModal(false)}
+          refreshProducts={getProducts}
+        />
+      </Modal>
+      <Modal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
+        <div>
+          <h2
+            className="
+text-xl
+font-bold
+mb-4
+"
+          >
+            Delete Product?
+          </h2>
+
+          <p className="mb-6">Are you sure you want to delete this product?</p>
+
+          <div className="flex gap-3">
+            <button
+              onClick={() => setShowDeleteModal(false)}
+              className="
+bg-gray-300
+px-4
+py-2
+rounded
+"
+            >
+              Cancel
+            </button>
+
+            <button
+              onClick={() => deleteProduct(selectedProductId)}
+              className="
+bg-red-600
+text-white
+px-4
+py-2
+rounded
+"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </Modal>
+      <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)}>
+        {selectedProduct && (
+          <EditProduct
+            product={selectedProduct}
+            closeModal={() => setShowEditModal(false)}
+            refreshProducts={getProducts}
+          />
+        )}
+      </Modal>
     </div>
   );
 }
