@@ -1,80 +1,262 @@
-import { NavLink } from "react-router";
-import { useCart } from "../pages/CartContext.jsx";
+import { NavLink, useNavigate } from "react-router";
+import { useState } from "react";
+
+import { FaShoppingCart, FaSignOutAlt, FaUserCircle } from "react-icons/fa";
+
+import { useAuth } from "../pages/AuthContext";
+import { useCart } from "../pages/CartContext";
 
 function Navbar() {
+  const navigate = useNavigate();
+
+  const { user, logout } = useAuth();
+
   const { totalItems } = useCart();
 
+  const [openUserMenu, setOpenUserMenu] = useState(false);
+
+  const handleLogout = () => {
+    setOpenUserMenu(false);
+
+    logout();
+
+    navigate("/login");
+  };
+
   return (
-    <nav className="bg-gray-900 shadow">
+    <nav
+      className="
+        bg-primary
+        shadow-lg
+      "
+    >
       <div
         className="
-        max-w-7xl 
-        mx-auto 
-        px-4 
-        py-4 
-        flex 
-        items-center
-      "
+          max-w-7xl
+          mx-auto
+          px-4
+          py-4
+          flex
+          items-center
+        "
       >
-        <NavLink className="text-white font-bold text-2xl" to="/home">
+        {/* LOGO */}
+
+        <NavLink
+          to="/shop"
+          className="
+            text-secondary
+            font-bold
+            text-2xl
+          "
+        >
           Fake Store
         </NavLink>
 
-        <ul className="flex gap-6 ml-auto">
+        <ul
+          className="
+            flex
+            gap-6
+            ml-auto
+            items-center
+          "
+        >
+          {/* SHOP */}
+
           <li>
             <NavLink
-              className="text-gray-300 hover:text-white transition"
               to="/shop"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-secondary font-bold"
+                  : "text-white hover:text-secondary"
+              }
             >
               Shop
             </NavLink>
           </li>
 
+          {/* ABOUT */}
+
           <li>
             <NavLink
-              className="text-gray-300 hover:text-white transition"
               to="/about"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-secondary font-bold"
+                  : "text-white hover:text-secondary"
+              }
             >
               About
             </NavLink>
           </li>
 
+          {/* CONTACT */}
+
           <li>
             <NavLink
-              className="text-gray-300 hover:text-white transition"
               to="/contact"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-secondary font-bold"
+                  : "text-white hover:text-secondary"
+              }
             >
               Contact
             </NavLink>
           </li>
 
-          <li>
-            <NavLink to="/login" className="text-gray-300 hover:text-white">
-              Login
-            </NavLink>
-          </li>
+          {user ? (
+            <>
+              {/* USER DROPDOWN */}
 
-          <li>
-            <NavLink to="/signup" className="text-gray-300 hover:text-white">
-              Sign Up
-            </NavLink>
-          </li>
+              <li
+                className="
+                    relative
+                  "
+              >
+                <button
+                  onClick={() => setOpenUserMenu(!openUserMenu)}
+                  className="
+                      flex
+                      items-center
+                      gap-2
+                      text-secondary
+                      hover:text-hover
+                      transition
+                    "
+                >
+                  <FaUserCircle
+                    className="
+                        text-2xl
+                      "
+                  />
 
-          <li>
-            <NavLink
-              className="
-                bg-blue-600
-                text-white
-                px-5
-                py-2
-                rounded-lg
-                hover:bg-blue-700
-              "
-              to="/cart"
-            >
-              🛒 Cart ({totalItems})
-            </NavLink>
-          </li>
+                  <span
+                    className="
+                        text-xs
+                        max-w-20
+                        truncate
+                      "
+                  >
+                    {user.FullName}
+                  </span>
+                </button>
+
+                {openUserMenu && (
+                  <div
+                    className="
+                          absolute
+                          right-0
+                          mt-3
+                          w-40
+                          bg-white
+                          rounded-xl
+                          shadow-lg
+                          border
+                          border-secondary
+                          overflow-hidden
+                          z-50
+                        "
+                  >
+                    {/* LOGOUT */}
+
+                    <button
+                      onClick={handleLogout}
+                      className="
+                            w-full
+                            flex
+                            items-center
+                            gap-2
+                            px-4
+                            py-3
+                            text-danger
+                            hover:bg-red-50
+                            transition
+                          "
+                    >
+                      <FaSignOutAlt />
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </li>
+
+              {/* CART */}
+
+              <li>
+                <NavLink
+                  to="/cart"
+                  className="
+                      relative
+                      text-secondary
+                      hover:text-hover
+                      transition
+                    "
+                >
+                  <FaShoppingCart
+                    className="
+                        text-2xl
+                      "
+                  />
+
+                  {totalItems > 0 && (
+                    <span
+                      className="
+                            absolute
+                            -top-3
+                            -right-3
+                            bg-danger
+                            text-white
+                            text-xs
+                            w-5
+                            h-5
+                            rounded-full
+                            flex
+                            items-center
+                            justify-center
+                            font-bold
+                          "
+                    >
+                      {totalItems}
+                    </span>
+                  )}
+                </NavLink>
+              </li>
+            </>
+          ) : (
+            <>
+              {/* LOGIN */}
+
+              <li>
+                <NavLink
+                  to="/login"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "text-secondary font-bold"
+                      : "text-white hover:text-secondary"
+                  }
+                >
+                  Login
+                </NavLink>
+              </li>
+
+              {/* SIGN UP */}
+
+              <li>
+                <NavLink
+                  to="/signup"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "text-secondary font-bold"
+                      : "text-white hover:text-secondary"
+                  }
+                >
+                  Sign Up
+                </NavLink>
+              </li>
+            </>
+          )}
         </ul>
       </div>
     </nav>

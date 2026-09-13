@@ -4,12 +4,12 @@ import API from "../services/api";
 
 import Modal from "../components/Modal";
 
-import CreateCategory from "./CreateCategory";
-import EditCategory from "./EditCategory";
+import CreateUser from "./CreateUser";
+import EditUser from "./EditUser";
 import TableSkeleton from "../components/TableSkeleton";
 
-function AdminCategories() {
-  const [categories, setCategories] = useState([]);
+function AdminUsers() {
+  const [users, setUsers] = useState([]);
 
   const [loading, setLoading] = useState(true);
 
@@ -19,19 +19,21 @@ function AdminCategories() {
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  const [selectedUserId, setSelectedUserId] = useState(null);
 
   useEffect(() => {
-    getCategories();
+    getUsers();
   }, []);
 
-  // GET ALL CATEGORIES
+  // GET USERS
 
-  const getCategories = async () => {
+  const getUsers = async () => {
     try {
-      const response = await API.get("/api/categories");
+      const response = await API.get("/api/users");
 
-      setCategories(response.data);
+      setUsers(response.data);
     } catch (error) {
       console.log(error);
     } finally {
@@ -39,13 +41,13 @@ function AdminCategories() {
     }
   };
 
-  // DELETE CATEGORY
+  // DELETE USER
 
-  const deleteCategory = async () => {
+  const deleteUser = async () => {
     try {
-      await API.delete(`/api/categories/${selectedCategory._id}`);
+      await API.delete(`/api/users/${selectedUserId}`);
 
-      await getCategories();
+      await getUsers();
 
       setShowDeleteModal(false);
     } catch (error) {
@@ -54,7 +56,7 @@ function AdminCategories() {
   };
 
   if (loading) {
-    return <TableSkeleton rows={3} columns={3} />;
+    return <TableSkeleton rows={30} columns={4} />;
   }
 
   return (
@@ -67,7 +69,6 @@ function AdminCategories() {
           justify-between
           items-center
           mb-6
-        
         "
       >
         <h1
@@ -76,7 +77,7 @@ function AdminCategories() {
             font-bold
           "
         >
-          Categories Management
+          Users Management
         </h1>
 
         <button
@@ -87,10 +88,10 @@ function AdminCategories() {
             px-5
             py-2
             rounded-lg
-               hover:bg-secondary
+            hover:bg-secondary
           "
         >
-          + Create Category
+          + Create User
         </button>
       </div>
 
@@ -104,10 +105,14 @@ function AdminCategories() {
           shadow
           rounded-xl
           overflow-x-auto
-       
         "
       >
-        <table className="w-full">
+        <table
+          className="
+            w-full
+            text-left
+          "
+        >
           <thead
             className="
               bg-primary
@@ -115,27 +120,31 @@ function AdminCategories() {
             "
           >
             <tr>
-              <th className="p-4 text-left">Name</th>
+              <th className="p-4">Name</th>
 
-              <th className="p-4 text-left">Description</th>
+              <th className="p-4">Email</th>
 
-              <th className="p-4 text-left">Actions</th>
+              <th className="p-4">Role</th>
+
+              <th className="p-4">Actions</th>
             </tr>
           </thead>
 
           <tbody>
-            {categories.map((category) => (
-              <tr key={category._id} className="border-b">
-                <td className="p-4">{category.name}</td>
+            {users.map((user) => (
+              <tr key={user._id} className="border-b">
+                <td className="p-4">{user.FullName}</td>
 
-                <td className="p-4">{category.desc}</td>
+                <td className="p-4">{user.Email}</td>
+
+                <td className="p-4">{user.Role}</td>
 
                 <td className="p-4 space-x-2">
                   {/* EDIT */}
 
                   <button
                     onClick={() => {
-                      setSelectedCategory(category);
+                      setSelectedUser(user);
 
                       setShowEditModal(true);
                     }}
@@ -154,7 +163,7 @@ function AdminCategories() {
 
                   <button
                     onClick={() => {
-                      setSelectedCategory(category);
+                      setSelectedUserId(user._id);
 
                       setShowDeleteModal(true);
                     }}
@@ -175,39 +184,39 @@ function AdminCategories() {
         </table>
       </div>
 
-      {/* CREATE MODAL */}
+      {/* CREATE USER MODAL */}
 
       <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)}>
-        <CreateCategory
+        <CreateUser
           closeModal={() => setShowCreateModal(false)}
-          refreshCategories={getCategories}
+          refreshUsers={getUsers}
         />
       </Modal>
 
-      {/* EDIT MODAL */}
+      {/* EDIT USER MODAL */}
 
       <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)}>
-        {selectedCategory && (
-          <EditCategory
-            category={selectedCategory}
+        {selectedUser && (
+          <EditUser
+            user={selectedUser}
             closeModal={() => setShowEditModal(false)}
-            refreshCategories={getCategories}
+            refreshUsers={getUsers}
           />
         )}
       </Modal>
 
-      {/* DELETE CONFIRM MODAL */}
+      {/* DELETE USER MODAL */}
 
       <Modal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
         <div>
           <h2
             className="
-              text-2xl
+              text-xl
               font-bold
               mb-4
             "
           >
-            Delete Category?
+            Delete User?
           </h2>
 
           <p
@@ -216,7 +225,7 @@ function AdminCategories() {
               text-gray-600
             "
           >
-            This will delete the category and all related products.
+            Are you sure you want to delete this user?
           </p>
 
           <div
@@ -230,22 +239,22 @@ function AdminCategories() {
               className="
                 bg-secondary
                 text-primary
-                px-5
+                px-4
                 py-2
-                rounded-lg
+                rounded
               "
             >
               Cancel
             </button>
 
             <button
-              onClick={deleteCategory}
+              onClick={deleteUser}
               className="
                 bg-danger
                 text-white
-                px-5
+                px-4
                 py-2
-                rounded-lg
+                rounded
               "
             >
               Delete
@@ -257,4 +266,4 @@ function AdminCategories() {
   );
 }
 
-export default AdminCategories;
+export default AdminUsers;

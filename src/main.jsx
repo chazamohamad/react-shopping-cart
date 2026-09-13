@@ -5,15 +5,18 @@ import "./index.css";
 
 import App from "./App.jsx";
 import { CartProvider } from "./pages/CartContext.jsx";
+import { AuthProvider } from "./pages/AuthContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
-      <CartProvider>
-        {/* Global Cart State */}
-        <App />
-      </CartProvider>
-      {/* فكل Components الموجودة داخل App بتقدر تستعمل الـ Cart. */}
+      <AuthProvider>
+        <CartProvider>
+          {/* Global Cart State */}
+          <App />
+        </CartProvider>
+        {/* فكل Components الموجودة داخل App بتقدر تستعمل الـ Cart. */}
+      </AuthProvider>
     </BrowserRouter>
   </StrictMode>,
 ); //الـ BrowserRouter يعرف شو الـ URL الحالي，

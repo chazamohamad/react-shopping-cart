@@ -179,7 +179,7 @@ function EditProduct({ product, closeModal, refreshProducts }) {
           <button
             disabled={loading}
             className="
-              bg-blue-600
+              bg-primary
               text-white
               px-5
               py-2
@@ -193,7 +193,8 @@ function EditProduct({ product, closeModal, refreshProducts }) {
             type="button"
             onClick={closeModal}
             className="
-              bg-gray-300
+              bg-danger
+              text-white
               px-5
               py-2
               rounded-lg

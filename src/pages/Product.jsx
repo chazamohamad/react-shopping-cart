@@ -16,6 +16,7 @@ function Product({ _id, title, desc, price, image, review }) {
           flex
           flex-col
           border
+          border-secondary
           hover:shadow-xl
           transition
           duration-300
@@ -91,7 +92,7 @@ function Product({ _id, title, desc, price, image, review }) {
 
           <h3
             className="
-              text-green-600
+              text-primary
               font-bold
               text-2xl
               mb-5
@@ -107,12 +108,13 @@ function Product({ _id, title, desc, price, image, review }) {
 
             <button
               className="
-                bg-green-600
+                bg-primary
                 text-white
                 py-3
                 rounded-xl
                 font-semibold
-                hover:bg-green-700
+                hover:bg-secondary
+                hover:text-primary
                 transition
               "
               onClick={() =>
@@ -132,13 +134,14 @@ function Product({ _id, title, desc, price, image, review }) {
             <Link
               to={`/product-details/${_id}`}
               className="
-                bg-blue-600
+                bg-primary
                 text-white
                 text-center
                 py-3
                 rounded-xl
                 font-semibold
-                hover:bg-blue-700
+                hover:bg-secondary
+                hover:text-primary
                 transition
               "
             >

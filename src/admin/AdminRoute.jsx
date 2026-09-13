@@ -1,7 +1,8 @@
 import { Navigate } from "react-router";
+import { useAuth } from "../pages/AuthContext";
 
 function AdminRoute({ children }) {
-  const user = JSON.parse(localStorage.getItem("user"));
+  const { user } = useAuth();
 
   // User not logged in
 

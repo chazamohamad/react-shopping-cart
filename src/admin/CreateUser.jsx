@@ -1,43 +1,21 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import API from "../services/api";
 
-function CreateProduct({ closeModal, refreshProducts }) {
-  const [categories, setCategories] = useState([]);
-
+function CreateUser({ closeModal, refreshUsers }) {
   const [loading, setLoading] = useState(false);
 
   const [error, setError] = useState("");
 
   const [formData, setFormData] = useState({
-    title: "",
+    FullName: "",
 
-    desc: "",
+    Email: "",
 
-    price: "",
+    Password: "",
 
-    image: "",
-
-    review: "",
-
-    categoryId: "",
+    Role: "customer",
   });
-
-  // GET CATEGORIES
-
-  useEffect(() => {
-    getCategories();
-  }, []);
-
-  const getCategories = async () => {
-    try {
-      const response = await API.get("/api/categories");
-
-      setCategories(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   // HANDLE INPUTS
 
@@ -49,15 +27,15 @@ function CreateProduct({ closeModal, refreshProducts }) {
     });
   };
 
-  // CREATE PRODUCT
+  // CREATE USER
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     setError("");
 
-    if (!formData.title || !formData.price || !formData.categoryId) {
-      setError("Title, price and category are required");
+    if (!formData.FullName || !formData.Email || !formData.Password) {
+      setError("Name, email and password are required");
 
       return;
     }
@@ -65,17 +43,13 @@ function CreateProduct({ closeModal, refreshProducts }) {
     try {
       setLoading(true);
 
-      await API.post("/api/products", formData);
+      await API.post("/api/users", formData);
 
-      // refresh table data
-
-      await refreshProducts();
-
-      // close popup
+      await refreshUsers();
 
       closeModal();
     } catch (error) {
-      setError(error.response?.data?.message || "Failed to create product");
+      setError(error.response?.data?.message || "Failed to create user");
     } finally {
       setLoading(false);
     }
@@ -90,7 +64,7 @@ function CreateProduct({ closeModal, refreshProducts }) {
           mb-6
         "
       >
-        Create Product
+        Create User
       </h2>
 
       {error && (
@@ -105,10 +79,13 @@ function CreateProduct({ closeModal, refreshProducts }) {
       )}
 
       <form onSubmit={handleSubmit}>
+        {/* FULL NAME */}
+
         <input
-          name="title"
-          placeholder="Product title"
-          value={formData.title}
+          type="text"
+          name="FullName"
+          placeholder="Full Name"
+          value={formData.FullName}
           onChange={handleChange}
           className="
             w-full
@@ -119,10 +96,13 @@ function CreateProduct({ closeModal, refreshProducts }) {
           "
         />
 
-        <textarea
-          name="desc"
-          placeholder="Description"
-          value={formData.desc}
+        {/* EMAIL */}
+
+        <input
+          type="email"
+          name="Email"
+          placeholder="Email"
+          value={formData.Email}
           onChange={handleChange}
           className="
             w-full
@@ -133,11 +113,13 @@ function CreateProduct({ closeModal, refreshProducts }) {
           "
         />
 
+        {/* PASSWORD */}
+
         <input
-          type="number"
-          name="price"
-          placeholder="Price"
-          value={formData.price}
+          type="password"
+          name="Password"
+          placeholder="Password"
+          value={formData.Password}
           onChange={handleChange}
           className="
             w-full
@@ -148,41 +130,11 @@ function CreateProduct({ closeModal, refreshProducts }) {
           "
         />
 
-        <input
-          name="image"
-          placeholder="Image URL"
-          value={formData.image}
-          onChange={handleChange}
-          className="
-            w-full
-            border
-            p-3
-            rounded-lg
-            mb-3
-          "
-        />
-
-        <input
-          type="number"
-          step="0.1"
-          min="0"
-          max="5"
-          name="review"
-          placeholder="Review"
-          value={formData.review}
-          onChange={handleChange}
-          className="
-            w-full
-            border
-            p-3
-            rounded-lg
-            mb-3
-          "
-        />
+        {/* ROLE */}
 
         <select
-          name="categoryId"
-          value={formData.categoryId}
+          name="Role"
+          value={formData.Role}
           onChange={handleChange}
           className="
             w-full
@@ -192,13 +144,9 @@ function CreateProduct({ closeModal, refreshProducts }) {
             mb-5
           "
         >
-          <option value="">Select Category</option>
+          <option value="customer">Customer</option>
 
-          {categories.map((category) => (
-            <option key={category._id} value={category._id}>
-              {category.name}
-            </option>
-          ))}
+          <option value="admin">Admin</option>
         </select>
 
         <div
@@ -240,4 +188,4 @@ function CreateProduct({ closeModal, refreshProducts }) {
   );
 }
 
-export default CreateProduct;
+export default CreateUser;

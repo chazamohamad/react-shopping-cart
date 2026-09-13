@@ -2,6 +2,7 @@ function Contact() {
   return (
     <div
       className="
+      bg-background
         max-w-5xl
         mx-auto
         px-4

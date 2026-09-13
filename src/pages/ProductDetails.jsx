@@ -130,7 +130,7 @@ function ProductDetails() {
               text-4xl
               font-bold
               mb-5
-              text-gray-900
+              text-primary
             "
           >
             {product.title}
@@ -163,7 +163,7 @@ function ProductDetails() {
             className="
               text-3xl
               font-bold
-              text-green-600
+              text-primary
               mb-8
             "
           >
@@ -182,12 +182,13 @@ function ProductDetails() {
 
             <button
               className="
-                bg-green-600
-                text-white
+                bg-primary
+                text-secondary
                 px-6
                 py-3
                 rounded-lg
-                hover:bg-green-700
+                hover:bg-secondary
+                hover:text-primary
                 transition
               "
               onClick={() =>
@@ -211,13 +212,13 @@ function ProductDetails() {
               to="/shop"
               className="
                 border
-                border-blue-600
-                text-blue-600
+                border-primary
+                text-primary
                 px-6
                 py-3
                 rounded-lg
-                hover:bg-blue-600
-                hover:text-white
+                hover:bg-secondary
+                hover:text-primary
                 transition
               "
             >

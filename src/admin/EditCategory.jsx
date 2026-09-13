@@ -63,7 +63,7 @@ mb-4
 
       <button
         className="
-bg-blue-600
+bg-primary
 text-white
 px-5
 py-2

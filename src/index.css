@@ -3,3 +3,15 @@
 body {
   margin: 0;
 }
+
+@theme {
+  --color-primary: #3b2f2f;
+
+  --color-secondary: #e8dcc4;
+
+  --color-background: #f5efe6;
+
+  --color-danger: #a62c00;
+
+  --color-hover: #bf7f67;
+}

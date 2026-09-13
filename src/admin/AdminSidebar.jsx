@@ -5,7 +5,7 @@ function AdminSidebar() {
     <aside
       className="
         w-64
-        bg-gray-900
+       bg-primary
         text-white
         min-h-screen
         p-5
@@ -24,33 +24,45 @@ function AdminSidebar() {
       <nav className="space-y-4">
         <NavLink
           to="/admin"
-          className="
-            block
-            text-gray-300
-            hover:text-white
-          "
+          end
+          className={({ isActive }) =>
+            isActive
+              ? "block bg-[#E8DCC4] text-primary rounded-lg px-4 py-2 font-bold"
+              : "block text-[#E8DCC4] hover:text-white px-4 py-2"
+          }
         >
           Dashboard
         </NavLink>
 
         <NavLink
+          to="/admin/users"
+          className={({ isActive }) =>
+            isActive
+              ? "block bg-secondary text-primary rounded-lg px-4 py-2 font-bold"
+              : "block text-secondary hover:text-white px-4 py-2"
+          }
+        >
+          Users
+        </NavLink>
+
+        <NavLink
           to="/admin/products"
-          className="
-            block
-            text-gray-300
-            hover:text-white
-          "
+          className={({ isActive }) =>
+            isActive
+              ? "block bg-secondary text-primary rounded-lg px-4 py-2 font-bold"
+              : "block text-secondary hover:text-white px-4 py-2"
+          }
         >
           Products
         </NavLink>
 
         <NavLink
           to="/admin/categories"
-          className="
-            block
-            text-gray-300
-            hover:text-white
-          "
+          className={({ isActive }) =>
+            isActive
+              ? "block bg-secondary text-primary rounded-lg px-4 py-2 font-bold"
+              : "block text-secondary hover:text-white px-4 py-2"
+          }
         >
           Categories
         </NavLink>

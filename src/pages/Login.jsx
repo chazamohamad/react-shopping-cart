@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import API from "../services/api";
+import { useAuth } from "./AuthContext";
 
 function Login() {
   const navigate = useNavigate();
+
+  const { login } = useAuth();
 
   const [formData, setFormData] = useState({
     Email: "",
@@ -41,7 +44,7 @@ function Login() {
       if (response.data.success) {
         const user = response.data.user;
 
-        localStorage.setItem("user", JSON.stringify(user));
+        login(user);
 
         if (user.Role === "admin") {
           navigate("/admin");
@@ -59,35 +62,53 @@ function Login() {
   return (
     <div
       className="
-            min-h-screen
-            flex
-            items-center
-            justify-center
-            bg-gray-100
-        "
+        min-h-screen
+        bg-background
+        flex
+        items-center
+        justify-center
+        p-6
+      "
     >
       <form
         onSubmit={handleSubmit}
         className="
-                    bg-white
-                    p-8
-                    rounded-xl
-                    shadow-lg
-                    w-96
-                "
+          bg-white
+          p-8
+          rounded-2xl
+          shadow-xl
+          border
+          border-secondary
+          w-full
+          max-w-md
+        "
       >
         <h1
           className="
-                    text-3xl
-                    font-bold
-                    mb-6
-                    text-center
-                "
+            text-3xl
+            font-bold
+            mb-6
+            text-center
+            text-primary
+          "
         >
           Login
         </h1>
 
-        {error && <p className="text-red-600 mb-4">{error}</p>}
+        {error && (
+          <p
+            className="
+                bg-red-100
+                text-danger
+                p-3
+                rounded-lg
+                mb-6
+                text-sm
+              "
+          >
+            {error}
+          </p>
+        )}
 
         <input
           name="Email"
@@ -96,12 +117,17 @@ function Login() {
           value={formData.Email}
           onChange={handleChange}
           className="
-                        w-full
-                        border
-                        p-3
-                        rounded
-                        mb-4
-                    "
+            w-full
+            border
+            border-secondary
+            p-3
+            rounded-lg
+            mb-6
+            focus:outline-none
+            focus:ring-2
+            focus:ring-primary
+           
+          "
         />
 
         <input
@@ -111,30 +137,54 @@ function Login() {
           value={formData.Password}
           onChange={handleChange}
           className="
-                        w-full
-                        border
-                        p-3
-                        rounded
-                        mb-5
-                    "
+            w-full
+            border
+            border-secondary
+            p-3
+            rounded-lg
+            mb-6
+            focus:outline-none
+            focus:ring-2
+            focus:ring-primary
+           
+          "
         />
 
         <button
           disabled={loading}
           className="
-                        w-full
-                        bg-blue-600
-                        text-white
-                        py-3
-                        rounded
-                    "
+            w-full
+            bg-primary
+            text-secondary
+            py-3
+            rounded-lg
+            font-bold
+            hover:bg-secondary
+          hover:text-primary
+            transition
+            duration-300
+          "
         >
           {loading ? "Logging..." : "Login"}
         </button>
 
-        <p className="mt-5 text-center">
+        <p
+          className="
+            mt-6
+            text-center
+            text-gray-500
+          "
+        >
           Don't have account?
-          <Link to="/signup" className="text-blue-600 ml-2">
+          <Link
+            to="/signup"
+            className="
+              text-primary
+              hover:text-hover
+              font-bold
+              ml-2
+            "
+          >
             Sign Up
           </Link>
         </p>

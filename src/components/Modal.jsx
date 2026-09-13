@@ -16,7 +16,9 @@ function Modal({ isOpen, onClose, children }) {
     >
       <div
         className="
-          bg-white
+        border
+        border-secondary
+        bg-background
           rounded-xl
           shadow-xl
           p-6

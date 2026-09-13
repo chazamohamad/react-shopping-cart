@@ -1,96 +1,232 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+
+import API from "../services/api";
+
+import { useAuth } from "./AuthContext";
 
 const CartContext = createContext();
 
 export function CartProvider({ children }) {
-  const [cart, setCart] = useState(() => {
-    const savedCart = localStorage.getItem("cart");
+  const { user } = useAuth();
 
-    return savedCart ? JSON.parse(savedCart) : [];
-  });
+  const [cart, setCart] = useState([]);
+
+  const [totalPrice, setTotalPrice] = useState(0);
+
+  const [loading, setLoading] = useState(false);
+
+  // GET CART FROM DATABASE
+
+  const getCart = async () => {
+    if (!user) {
+      setCart([]);
+
+      setTotalPrice(0);
+
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const response = await API.get(`/api/cart/${user.id}`);
+
+      setCart(response.data.products);
+
+      setTotalPrice(response.data.totalPrice);
+    } catch (error) {
+      // if user has no cart yet
+
+      setCart([]);
+
+      setTotalPrice(0);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // LOAD CART WHEN USER CHANGES
 
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
+    getCart();
+  }, [user]);
 
-  // ADD PRODUCT TO CART
-  function addToCart(product) {
-    setCart((currentCart) => {
-      const existingProduct = currentCart.find(
-        (item) => item.id === product.id,
-      );
+  // ADD PRODUCT
 
-      // Product already exists
-      if (existingProduct) {
-        return currentCart.map((item) =>
-          item.id === product.id
-            ? {
-                ...item,
-                quantity: item.quantity + 1,
-              }
-            : item,
-        );
-      }
+  const addToCart = async (product) => {
+    if (!user) {
+      return;
+    }
 
-      // New product
-      return [
-        ...currentCart,
+    try {
+      await API.post(
+        "/api/cart",
+
         {
-          ...product,
+          userId: user.id,
+
+          productId: product.id,
+
           quantity: 1,
         },
-      ];
-    });
-  }
+      );
 
-  // PLUS +
-  function increaseQuantity(id) {
-    setCart((currentCart) =>
-      currentCart.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              quantity: item.quantity + 1,
-            }
-          : item,
-      ),
-    );
-  }
+      await getCart();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  // MINUS -
-  function decreaseQuantity(id) {
-    setCart((currentCart) =>
-      currentCart
-        .map((item) =>
-          item.id === id
+  // INCREASE QUANTITY
+
+  const increaseQuantity = async (productId) => {
+    if (!user) return;
+
+    const item = cart.find((item) => item.productId._id === productId);
+
+    if (!item) return;
+
+    const newQuantity = item.quantity + 1;
+
+    try {
+      await API.put(
+        `/api/cart/${user.id}/${productId}`,
+
+        {
+          quantity: newQuantity,
+        },
+      );
+
+      // update UI directly without refresh
+
+      setCart((prevCart) =>
+        prevCart.map((item) =>
+          item.productId._id === productId
             ? {
                 ...item,
-                quantity: item.quantity - 1,
+                quantity: newQuantity,
               }
             : item,
-        )
-        .filter((item) => item.quantity > 0),
-    );
-  }
+        ),
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  // TOTAL PRICE
-  const totalPrice = cart.reduce(
-    (total, item) => total + item.price * item.quantity,
+  // DECREASE QUANTITY
+
+  const decreaseQuantity = async (productId) => {
+    if (!user) return;
+
+    const item = cart.find((item) => item.productId._id === productId);
+
+    if (!item) return;
+
+    if (item.quantity === 1) {
+      removeFromCart(productId);
+
+      return;
+    }
+
+    const newQuantity = item.quantity - 1;
+
+    try {
+      await API.put(
+        `/api/cart/${user.id}/${productId}`,
+
+        {
+          quantity: newQuantity,
+        },
+      );
+
+      setCart((prevCart) =>
+        prevCart.map((item) =>
+          item.productId._id === productId
+            ? {
+                ...item,
+                quantity: newQuantity,
+              }
+            : item,
+        ),
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // REMOVE PRODUCT
+
+  const removeFromCart = async (productId) => {
+    if (!user) return;
+
+    try {
+      await API.delete(`/api/cart/${user.id}/${productId}`);
+
+      setCart((prevCart) =>
+        prevCart.filter((item) => item.productId._id !== productId),
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // CLEAR CART
+
+  const clearCart = async () => {
+    if (!user) return;
+
+    try {
+      await API.delete(`/api/cart/clear/${user.id}`);
+
+      setCart([]);
+
+      setTotalPrice(0);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // CALCULATE TOTAL PRICE
+
+  useEffect(() => {
+    const total = cart.reduce(
+      (sum, item) => sum + item.productId.price * item.quantity,
+
+      0,
+    );
+
+    setTotalPrice(total);
+  }, [cart]);
+
+  // TOTAL ITEMS
+
+  const totalItems = cart.reduce(
+    (sum, item) => sum + item.quantity,
+
     0,
   );
-
-  // TOTAL NUMBER OF ITEMS
-  const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <CartContext.Provider
       value={{
         cart,
+
         addToCart,
+
         increaseQuantity,
+
         decreaseQuantity,
+
+        removeFromCart,
+
+        clearCart,
+
         totalPrice,
+
         totalItems,
+
+        loading,
       }}
     >
       {children}
@@ -101,17 +237,3 @@ export function CartProvider({ children }) {
 export function useCart() {
   return useContext(CartContext);
 }
-//Cart Page مش هي الـ  CartProvider .
-// هي بس المكان اللي رح يمسك ويحافظ على
-// cart data المشتركة.
-// أما:
-// Cart.jsx
-//data هي الصفحة اللي بتعرض هيدي
-
-// cart = الـ actual shared data
-// CartProvider = Component بيمتلك ويدير cart state
-// CartContext = الـ channel اللي من خلاله منشارك البيانات
-// useContext() = React Hook بيقرأ البيانات من الـ Context
-// useCart() = Custom Hook عملناه كـ shortcut بدل ما نكتب useContext(CartContext) كل مرة
-// children = كل JSX موجود جوّا <CartProvider>...</CartProvider>
-// value = الأشياء اللي الـ Provider قرر يشاركها مع الـ Components اللي تحته

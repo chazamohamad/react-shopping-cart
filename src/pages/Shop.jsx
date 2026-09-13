@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import API from "../services/api.js";
 
 import Product from "./Product.jsx";
+import ProductSkeleton from "../components/ProductSkeleton";
 
 function Shop() {
   const [products, setProducts] = useState([]);
@@ -65,7 +66,8 @@ function Shop() {
         max-w-7xl
         mx-auto
         px-6
-        py-10
+        py-6
+        
       "
     >
       {/* TITLE + CART */}
@@ -82,6 +84,7 @@ function Shop() {
           className="
             text-4xl
             font-bold
+          text-primary
           "
         >
           Our Products
@@ -95,15 +98,16 @@ function Shop() {
         placeholder="Search by product title..."
         className="
           w-full
-          border
-          border-gray-300
-          rounded-lg
-          px-4
-          py-3
-          mb-10
-          focus:outline-none
-          focus:ring-2
-          focus:ring-blue-500
+  border
+  border-secondary
+  rounded-lg
+  px-4
+  py-3
+  mb-10
+  bg-white
+  focus:outline-none
+  focus:ring-2
+  focus:ring-primary
         "
         value={searchTerm}
         onChange={(event) => {
@@ -116,14 +120,20 @@ function Shop() {
       {/* LOADING */}
 
       {loading && (
-        <p
+        <div
           className="
-            text-center
-            text-gray-500
-          "
+      grid
+      grid-cols-1
+      sm:grid-cols-2
+      lg:grid-cols-3
+      xl:grid-cols-3
+      gap-10
+    "
         >
-          Loading products...
-        </p>
+          {Array.from({ length: 6 }).map((_, index) => (
+            <ProductSkeleton key={index} />
+          ))}
+        </div>
       )}
 
       {/* ERROR */}
@@ -132,7 +142,7 @@ function Shop() {
         <p
           className="
             text-center
-            text-red-600
+            text-danger
           "
         >
           {error}
@@ -184,18 +194,22 @@ function Shop() {
                 flex
                 justify-center
                 gap-3
-                mt-12
+                mt-6
               "
             >
               <button
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
                 className="
-                  px-4
-                  py-2
-                  border
-                  rounded-lg
-                  disabled:opacity-50
+                 px-4
+py-2
+border
+border-secondary
+font-bold
+rounded-lg
+text-primary
+hover:bg-secondary
+transition
                 "
               >
                 Previous
@@ -213,8 +227,8 @@ function Shop() {
 
                         ${
                           currentPage === index + 1
-                            ? "bg-blue-600 text-white"
-                            : "bg-white"
+                            ? "bg-primary text-white"
+                            : "bg-secondary"
                         }
 
                       `}
@@ -227,11 +241,15 @@ function Shop() {
                 disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
                 className="
-                  px-4
-                  py-2
-                  border
-                  rounded-lg
-                  disabled:opacity-50
+                 px-4
+py-2
+border
+border-secondary
+font-bold
+rounded-lg
+text-primary
+hover:bg-secondary
+transition
                 "
               >
                 Next

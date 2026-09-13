@@ -2,14 +2,14 @@ import { NavLink } from "react-router";
 
 function Footer() {
   return (
-    <footer className="bg-gray-900 text-white mt-10 py-10">
+    <footer className="bg-primary text-white  py-10">
       <div className="max-w-7xl mx-auto px-4">
         <div className="grid md:grid-cols-2 gap-8">
           {/* CONTACT */}
           <div>
             <h5 className="font-bold text-xl mb-4">Contact Info</h5>
 
-            <p className="mb-2">Phone: +961 00 000 000</p>
+            <p className="mb-2">Phone: +961 70 462 560</p>
 
             <p>Address: Beirut, Lebanon</p>
           </div>
@@ -20,19 +20,19 @@ function Footer() {
 
             <ul className="space-y-3">
               <li>
-                <NavLink to="/home" className="hover:text-gray-300">
-                  Home
+                <NavLink to="/shop" className="hover:text-secondary">
+                  shop
                 </NavLink>
               </li>
 
               <li>
-                <NavLink to="/about" className="hover:text-gray-300">
+                <NavLink to="/about" className="hover:text-secondary">
                   About
                 </NavLink>
               </li>
 
               <li>
-                <NavLink to="/contact" className="hover:text-gray-300">
+                <NavLink to="/contact" className="hover:text-secondary">
                   Contact
                 </NavLink>
               </li>

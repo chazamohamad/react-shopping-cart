@@ -1,161 +1,212 @@
 import { Link } from "react-router";
+
 import { useCart } from "./CartContext";
 
 function Cart() {
-  const { cart, increaseQuantity, decreaseQuantity, totalPrice } = useCart();
+  const {
+    cart,
+
+    increaseQuantity,
+
+    decreaseQuantity,
+
+    removeFromCart,
+
+    totalPrice,
+
+    loading,
+  } = useCart();
+
+  if (loading) {
+    return <p className="text-center mt-10">Loading cart...</p>;
+  }
 
   return (
-    <main className="max-w-5xl mx-auto px-4 py-10">
+    <main
+      className="
+max-w-7xl
+mx-auto
+px-4
+py-10
+"
+    >
       <h1
         className="
-          text-4xl
-          font-bold
-          text-center
-          mb-10
-        "
+text-4xl
+font-bold
+mb-8
+text-primary
+"
       >
-        My Cart
+        Shopping Cart
       </h1>
 
       {cart.length === 0 ? (
-        <div className="text-center">
-          <h4 className="text-xl mb-5">Your cart is empty</h4>
+        <div>
+          <p className="text-gray-500 mb-5">Your cart is empty</p>
 
           <Link
             to="/shop"
             className="
-                bg-blue-600
-                text-white
-                px-5
-                py-3
-                rounded-lg
-              "
+bg-primary
+text-white
+px-5
+py-2
+rounded-lg
+"
           >
-            Go to Products
+            Go Shopping
           </Link>
         </div>
       ) : (
-        <>
-          {cart.map((item) => (
-            <div
-              key={item.id}
-              className="
-                  bg-white
-                  shadow-md
-                  rounded-xl
-                  p-5
-                  mb-5
-                "
-            >
+        <div>
+          <div
+            className="
+space-y-5
+
+"
+          >
+            {cart.map((item) => (
               <div
+                key={item.productId._id}
                 className="
-                    flex
-                    flex-col
-                    md:flex-row
-                    items-center
-                    gap-6
-                  "
+bg-white
+shadow
+rounded-xl
+p-5
+flex
+items-center
+justify-between
+"
               >
-                {/* IMAGE */}
+                {/* PRODUCT INFO */}
 
-                <img
-                  src={item.image}
-                  alt={item.title}
+                <div
                   className="
-                      w-40
-                      h-40
-                      object-contain
-                    "
-                />
-
-                {/* INFO */}
-
-                <div className="flex-1">
-                  <h5
+flex
+items-center
+gap-5
+"
+                >
+                  <img
+                    src={item.productId.image}
+                    alt={item.productId.title}
                     className="
-                        text-xl
-                        font-bold
-                        mb-3
-                      "
-                  >
-                    {item.title}
-                  </h5>
+w-24
+h-24
+object-cover
+rounded
+"
+                  />
 
-                  <p className="mb-3">Price: ${item.price}</p>
-
-                  <div
-                    className="
-                        flex
-                        items-center
-                        gap-4
-                      "
-                  >
-                    <button
+                  <div>
+                    <h2
                       className="
-                          bg-red-600
-                          text-white
-                          px-3
-                          py-1
-                          rounded
-                        "
-                      onClick={() => decreaseQuantity(item.id)}
+font-bold
+text-xl
+"
                     >
-                      -
-                    </button>
+                      {item.productId.title}
+                    </h2>
 
-                    <strong>{item.quantity}</strong>
-
-                    <button
-                      className="
-                          bg-green-600
-                          text-white
-                          px-3
-                          py-1
-                          rounded
-                        "
-                      onClick={() => increaseQuantity(item.id)}
-                    >
-                      +
-                    </button>
+                    <p>${item.productId.price}</p>
                   </div>
-
-                  <p className="mt-4 font-bold">
-                    Subtotal: ${(item.price * item.quantity).toFixed(2)}
-                  </p>
                 </div>
-              </div>
-            </div>
-          ))}
 
-          <div className="text-right mt-8">
+                {/* QUANTITY */}
+
+                <div
+                  className="
+flex
+items-center
+gap-3
+"
+                >
+                  <button
+                    onClick={() => decreaseQuantity(item.productId._id)}
+                    className="
+bg-background
+px-3
+py-1
+rounded
+"
+                  >
+                    -
+                  </button>
+
+                  <span>{item.quantity}</span>
+
+                  <button
+                    onClick={() => increaseQuantity(item.productId._id)}
+                    className="
+bg-background
+px-3
+py-1
+rounded
+"
+                  >
+                    +
+                  </button>
+                </div>
+
+                {/* DELETE */}
+
+                <button
+                  onClick={() => removeFromCart(item.productId._id)}
+                  className="
+bg-danger
+text-white
+px-4
+py-2
+rounded
+"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {/* TOTAL */}
+
+          <div
+            className="
+mt-10
+border
+border-primary
+text-white
+p-6
+rounded-xl
+"
+          >
             <h2
               className="
-                text-3xl
-                font-bold
-              "
+text-2xl
+font-bold
+text-primary
+"
             >
-              Total: ${totalPrice.toFixed(2)}
+              Total: ${totalPrice}
             </h2>
+
+            <Link
+              to="/shop"
+              className="
+inline-block
+mt-5
+bg-primary
+text-white
+hover:bg-secondary
+hover:text-primary
+px-5
+py-2
+rounded
+"
+            >
+              Continue Shopping
+            </Link>
           </div>
-          <Link
-            to="/shop"
-            className="
-    inline-block
-    border
-    border-blue-600
-    text-blue-600
-    px-6
-    py-3
-    rounded-lg
-    hover:bg-blue-600
-    hover:text-white
-    transition
-    mt-6
-  "
-          >
-            Back to Shop
-          </Link>
-        </>
+        </div>
       )}
     </main>
   );

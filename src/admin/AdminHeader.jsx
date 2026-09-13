@@ -1,13 +1,20 @@
-import { useNavigate } from "react-router";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+
+import { useAuth } from "../pages/AuthContext";
+import { useState } from "react";
+import { FaUserCircle } from "react-icons/fa";
 
 function AdminHeader() {
   const navigate = useNavigate();
 
-  const user = JSON.parse(localStorage.getItem("user"));
+  const { user, logout } = useAuth();
+  const [openProfile, setOpenProfile] = useState(false);
 
-  const logout = () => {
-    localStorage.removeItem("user");
+  const handleLogout = () => {
+    // Only logout user
+    // Cart stays in database
+
+    logout();
 
     navigate("/login");
   };
@@ -15,7 +22,7 @@ function AdminHeader() {
   return (
     <header
       className="
-        bg-white
+      bg-secondary
         shadow
         px-6
         py-4
@@ -24,8 +31,6 @@ function AdminHeader() {
         items-center
       "
     >
-      {/* TITLE */}
-
       <h2
         className="
           text-xl
@@ -34,8 +39,6 @@ function AdminHeader() {
       >
         Dashboard
       </h2>
-
-      {/* PROFILE AREA */}
 
       <div
         className="
@@ -69,34 +72,88 @@ function AdminHeader() {
           </p>
         </div>
 
-        {/* PROFILE BUTTON */}
+        {/* PROFILE */}
 
-        <Link
-          to="/admin/profile"
+        <div
           className="
- bg-gray-200
- px-4
- py-2
- rounded-lg
-"
+    relative
+  "
         >
-          Profile
-        </Link>
+          {/* PROFILE ICON */}
 
-        {/* LOGOUT BUTTON */}
+          <button
+            onClick={() => setOpenProfile(!openProfile)}
+            className="
+      text-primary
+      hover:text-hover
+      transition
+    "
+          >
+            <FaUserCircle
+              className="
+        text-4xl
+      "
+            />
+          </button>
 
-        <button
-          onClick={logout}
-          className="
-            bg-red-600
-            text-white
+          {/* DROPDOWN */}
+
+          {openProfile && (
+            <div
+              className="
+          absolute
+          right-0
+          mt-3
+          w-40
+          bg-white
+          rounded-xl
+          shadow-lg
+          border
+          border-secondary
+          overflow-hidden
+          z-50
+        "
+            >
+              {/* PROFILE */}
+
+              <Link
+                to="/admin/profile"
+                onClick={() => setOpenProfile(false)}
+                className="
+            block
             px-4
-            py-2
-            rounded-lg
+            py-3
+            text-primary
+            hover:bg-secondary
+            transition
           "
-        >
-          Logout
-        </button>
+              >
+                Profile
+              </Link>
+
+              {/* LOGOUT */}
+
+              <button
+                onClick={() => {
+                  logout();
+
+                  navigate("/login");
+                }}
+                className="
+            w-full
+            text-left
+            px-4
+            py-3
+            text-danger
+            hover:bg-red-50
+            transition
+          "
+              >
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );

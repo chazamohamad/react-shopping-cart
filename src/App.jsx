@@ -16,6 +16,7 @@ import AdminProducts from "./admin/AdminProducts";
 import AdminCategories from "./admin/AdminCategories";
 import AdminProfile from "./admin/AdminProfile";
 import AdminRoute from "./admin/AdminRoute";
+import AdminUsers from "./admin/AdminUsers";
 
 function App() {
   return (
@@ -51,6 +52,8 @@ function App() {
         }
       >
         <Route index element={<AdminDashboard />} />
+
+        <Route path="users" element={<AdminUsers />} />
 
         <Route path="products" element={<AdminProducts />} />
 

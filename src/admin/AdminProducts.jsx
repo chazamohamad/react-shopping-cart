@@ -5,6 +5,7 @@ import API from "../services/api";
 import Modal from "../components/Modal";
 import CreateProduct from "./CreateProduct";
 import EditProduct from "./EditProduct";
+import TableSkeleton from "../components/TableSkeleton";
 
 function AdminProducts() {
   const [products, setProducts] = useState([]);
@@ -54,7 +55,7 @@ function AdminProducts() {
   };
 
   if (loading) {
-    return <p>Loading products...</p>;
+    return <TableSkeleton rows={30} columns={6} />;
   }
 
   return (
@@ -81,12 +82,12 @@ function AdminProducts() {
         <button
           onClick={() => setShowCreateModal(true)}
           className="
-            bg-green-600
+            bg-primary
             text-white
             px-5
             py-2
             rounded-lg
-            hover:bg-green-700
+            hover:bg-secondary
           "
         >
           + Create Product
@@ -98,6 +99,8 @@ function AdminProducts() {
       <div
         className="
           bg-white
+          border
+          border-secondary
           rounded-xl
           shadow
           overflow-x-auto
@@ -111,7 +114,7 @@ function AdminProducts() {
         >
           <thead
             className="
-              bg-gray-900
+              bg-primary
               text-white
             "
           >
@@ -164,7 +167,7 @@ function AdminProducts() {
                       setShowEditModal(true);
                     }}
                     className="
-bg-blue-600
+bg-primary
 text-white
 px-3
 py-1
@@ -181,7 +184,7 @@ rounded
                       setShowDeleteModal(true);
                     }}
                     className="
-bg-red-600
+bg-danger
 text-white
 px-3
 py-1
@@ -223,7 +226,8 @@ mb-4
             <button
               onClick={() => setShowDeleteModal(false)}
               className="
-bg-gray-300
+bg-secondary
+text-primary
 px-4
 py-2
 rounded
@@ -235,7 +239,7 @@ rounded
             <button
               onClick={() => deleteProduct(selectedProductId)}
               className="
-bg-red-600
+bg-danger
 text-white
 px-4
 py-2

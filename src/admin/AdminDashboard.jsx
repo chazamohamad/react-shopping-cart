@@ -22,6 +22,8 @@ function AdminDashboard() {
         <div
           className="
             bg-white
+border
+border-secondary
             p-6
             rounded-xl
             shadow
@@ -34,7 +36,9 @@ function AdminDashboard() {
 
         <div
           className="
-            bg-white
+           bg-white
+border
+border-secondary
             p-6
             rounded-xl
             shadow
@@ -47,7 +51,9 @@ function AdminDashboard() {
 
         <div
           className="
-            bg-white
+           bg-white
+border
+border-secondary
             p-6
             rounded-xl
             shadow
