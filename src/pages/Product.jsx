@@ -113,6 +113,7 @@ function Product({ _id, title, desc, price, image, review }) {
                 py-3
                 rounded-xl
                 font-semibold
+                  cursor-pointer
                 hover:bg-secondary
                 hover:text-primary
                 transition

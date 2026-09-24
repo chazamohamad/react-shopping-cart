@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
+import { Navigate } from "react-router";
+
 import API from "../services/api";
 import { useAuth } from "./AuthContext";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 function Login() {
   const navigate = useNavigate();
-
+  const { user } = useAuth();
   const { login } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
 
   const [formData, setFormData] = useState({
     Email: "",
@@ -16,6 +20,10 @@ function Login() {
   const [error, setError] = useState("");
 
   const [loading, setLoading] = useState(false);
+
+  if (user && user.Role !== "admin") {
+    return <Navigate to="/shop" />;
+  }
 
   const handleChange = (e) => {
     setFormData({
@@ -130,25 +138,40 @@ function Login() {
           "
         />
 
-        <input
-          name="Password"
-          type="password"
-          placeholder="Password"
-          value={formData.Password}
-          onChange={handleChange}
-          className="
-            w-full
-            border
-            border-secondary
-            p-3
-            rounded-lg
-            mb-6
-            focus:outline-none
-            focus:ring-2
-            focus:ring-primary
-           
-          "
-        />
+        <div className="relative mb-4">
+          <input
+            name="Password"
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            value={formData.Password}
+            onChange={handleChange}
+            className="
+      w-full
+      border
+      border-secondary
+      p-3
+      rounded-lg
+      pr-12
+      focus:outline-none
+      focus:ring-2
+      focus:ring-primary
+    "
+          />
+
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="
+      absolute
+      right-3
+      top-1/2
+      -translate-y-1/2
+      text-primary
+    "
+          >
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </button>
+        </div>
 
         <button
           disabled={loading}
@@ -159,6 +182,7 @@ function Login() {
             py-3
             rounded-lg
             font-bold
+              cursor-pointer
             hover:bg-secondary
           hover:text-primary
             transition

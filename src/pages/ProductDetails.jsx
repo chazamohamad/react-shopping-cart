@@ -188,6 +188,7 @@ function ProductDetails() {
                 py-3
                 rounded-lg
                 hover:bg-secondary
+                  cursor-pointer
                 hover:text-primary
                 transition
               "

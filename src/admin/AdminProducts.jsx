@@ -55,7 +55,7 @@ function AdminProducts() {
   };
 
   if (loading) {
-    return <TableSkeleton rows={30} columns={6} />;
+    return <TableSkeleton rows={5} columns={6} />;
   }
 
   return (

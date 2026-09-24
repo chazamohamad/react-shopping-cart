@@ -9,6 +9,8 @@ import ProductDetails from "./pages/ProductDetails";
 import Cart from "./pages/Cart";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import Checkout from "./pages/Checkout";
+import OrderSuccess from "./pages/OrderSuccess";
 
 import AdminLayout from "./admin/AdminLayout";
 import AdminDashboard from "./admin/AdminDashboard";
@@ -17,6 +19,7 @@ import AdminCategories from "./admin/AdminCategories";
 import AdminProfile from "./admin/AdminProfile";
 import AdminRoute from "./admin/AdminRoute";
 import AdminUsers from "./admin/AdminUsers";
+import AdminOrders from "./admin/AdminOrders";
 
 function App() {
   return (
@@ -59,8 +62,12 @@ function App() {
 
         <Route path="categories" element={<AdminCategories />} />
 
+        <Route path="orders" element={<AdminOrders />} />
+
         <Route path="profile" element={<AdminProfile />} />
       </Route>
+      <Route path="/checkout" element={<Checkout />} />
+      <Route path="/order-success" element={<OrderSuccess />} />
     </Routes>
   );
 }

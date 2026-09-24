@@ -66,6 +66,17 @@ function AdminSidebar() {
         >
           Categories
         </NavLink>
+
+        <NavLink
+          to="/admin/orders"
+          className={({ isActive }) =>
+            isActive
+              ? "block bg-secondary text-primary rounded-lg px-4 py-2 font-bold"
+              : "block text-secondary hover:text-white px-4 py-2"
+          }
+        >
+          Orders
+        </NavLink>
       </nav>
     </aside>
   );

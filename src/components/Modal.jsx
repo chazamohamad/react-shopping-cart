@@ -1,50 +1,33 @@
-function Modal({ isOpen, onClose, children }) {
+function Modal({ isOpen, onClose, children, size = "md" }) {
   if (!isOpen) return null;
 
   return (
     <div
+      onClick={onClose}
       className="
-    fixed
-    inset-0
-    bg-white/20
-    backdrop-blur-sm
-    flex
-    items-center
-    justify-center
-    z-50
-  "
+        fixed
+        inset-0
+        bg-black/10
+        flex
+        items-center
+        justify-center
+        z-50
+        p-4
+      "
     >
       <div
-        className="
-        border
-        border-secondary
-        bg-background
+        onClick={(e) => e.stopPropagation()}
+        className={`
+          bg-background
           rounded-xl
           shadow-xl
+          border
+          border-secondary
           p-6
           w-full
-          max-w-lg
-        "
+          ${size === "xl" ? "max-w-4xl" : "max-w-lg"}
+        `}
       >
-        <div
-          className="
-            flex
-            justify-end
-            mb-4
-          "
-        >
-          <button
-            onClick={onClose}
-            className="
-              text-gray-500
-              hover:text-black
-              text-xl
-            "
-          >
-            ✕
-          </button>
-        </div>
-
         {children}
       </div>
     </div>

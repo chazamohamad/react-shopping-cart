@@ -15,6 +15,8 @@ function Cart() {
     totalPrice,
 
     loading,
+
+    clearCart,
   } = useCart();
 
   if (loading) {
@@ -189,6 +191,22 @@ text-primary
               Total: ${totalPrice}
             </h2>
 
+            <button
+              onClick={clearCart}
+              className="
+    bg-danger
+    text-white
+    px-5
+    py-3
+    rounded-lg
+    hover:bg-hover
+    transition
+    font-bold
+  "
+            >
+              Clear Cart
+            </button>
+
             <Link
               to="/shop"
               className="
@@ -206,6 +224,25 @@ rounded
               Continue Shopping
             </Link>
           </div>
+          {cart.length > 0 && (
+            <Link
+              to="/checkout"
+              className="
+        inline-block
+        mt-5
+        bg-primary
+        text-secondary
+        px-6
+        py-3
+        rounded-lg
+        font-bold
+        hover:bg-hover
+        transition
+      "
+            >
+              Checkout Order
+            </Link>
+          )}
         </div>
       )}
     </main>

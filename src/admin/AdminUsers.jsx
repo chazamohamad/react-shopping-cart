@@ -56,7 +56,7 @@ function AdminUsers() {
   };
 
   if (loading) {
-    return <TableSkeleton rows={30} columns={4} />;
+    return <TableSkeleton rows={5} columns={4} />;
   }
 
   return (

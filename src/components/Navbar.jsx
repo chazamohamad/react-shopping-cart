@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from "react-router";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import { FaShoppingCart, FaSignOutAlt, FaUserCircle } from "react-icons/fa";
 
@@ -8,12 +8,27 @@ import { useCart } from "../pages/CartContext";
 
 function Navbar() {
   const navigate = useNavigate();
+  const userMenuRef = useRef();
 
   const { user, logout } = useAuth();
 
   const { totalItems } = useCart();
 
   const [openUserMenu, setOpenUserMenu] = useState(false);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setOpenUserMenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleLogout = () => {
     setOpenUserMenu(false);
@@ -108,11 +123,56 @@ function Navbar() {
 
           {user ? (
             <>
+              {/* CART */}
+
+              <li>
+                <NavLink
+                  to="/cart"
+                  className="
+                      relative
+                      text-secondary
+                      hover:text-hover
+                      transition
+                    "
+                >
+                  <FaShoppingCart
+                    className="
+                        text-2xl
+                      
+                      "
+                  />
+
+                  {totalItems > 0 && (
+                    <span
+                      className="
+                            absolute
+                            -top-3
+                            -right-3
+                            bg-danger
+                            text-white
+                            text-xs
+                            w-5
+                            h-5
+                            rounded-full
+                            flex
+                            items-center
+                            justify-center
+                            font-bold
+                          "
+                    >
+                      {totalItems}
+                    </span>
+                  )}
+                </NavLink>
+              </li>
+
               {/* USER DROPDOWN */}
 
               <li
+                ref={userMenuRef}
                 className="
                     relative
+                  
                   "
               >
                 <button
@@ -180,48 +240,6 @@ function Navbar() {
                     </button>
                   </div>
                 )}
-              </li>
-
-              {/* CART */}
-
-              <li>
-                <NavLink
-                  to="/cart"
-                  className="
-                      relative
-                      text-secondary
-                      hover:text-hover
-                      transition
-                    "
-                >
-                  <FaShoppingCart
-                    className="
-                        text-2xl
-                      "
-                  />
-
-                  {totalItems > 0 && (
-                    <span
-                      className="
-                            absolute
-                            -top-3
-                            -right-3
-                            bg-danger
-                            text-white
-                            text-xs
-                            w-5
-                            h-5
-                            rounded-full
-                            flex
-                            items-center
-                            justify-center
-                            font-bold
-                          "
-                    >
-                      {totalItems}
-                    </span>
-                  )}
-                </NavLink>
               </li>
             </>
           ) : (

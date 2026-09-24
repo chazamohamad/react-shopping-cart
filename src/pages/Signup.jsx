@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import API from "../services/api";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 function Signup() {
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -166,24 +168,41 @@ function Signup() {
           "
         />
 
-        <input
-          name="Password"
-          type="password"
-          placeholder="Password"
-          value={formData.Password}
-          onChange={handleChange}
-          className="
-            w-full
-            border
-            border-secondary
-            p-3
-            rounded-lg
-            mb-6
-            focus:outline-none
-            focus:ring-2
-            focus:ring-primary
-          "
-        />
+        <div className="relative mb-4">
+          <input
+            name="Password"
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            value={formData.Password}
+            onChange={handleChange}
+            autoComplete="new-password"
+            data-lpignore="true"
+            className="
+    w-full
+    border
+    border-secondary
+    p-3
+    rounded-lg
+    pr-12
+    focus:outline-none
+    focus:ring-2
+    focus:ring-primary
+  "
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="
+      absolute
+      right-3
+      top-1/2
+      -translate-y-1/2
+      text-primary
+    "
+          >
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </button>
+        </div>
 
         <button
           disabled={loading}
@@ -194,6 +213,7 @@ function Signup() {
             py-3
             rounded-lg
             font-bold
+              cursor-pointer
             hover:bg-secondary
             hover:text-primary
             transition
