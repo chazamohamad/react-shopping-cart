@@ -208,125 +208,138 @@ function AdminProducts() {
           </thead>
 
           <tbody>
-            {products.map((product) => (
-              <tr
-                key={product._id}
+            {products.length === 0 ? (
+              <p
                 className="
+text-center
+text-gray-500
+py-10
+font-bold
+"
+              >
+                No data found
+              </p>
+            ) : (
+              products.map((product) => (
+                <tr
+                  key={product._id}
+                  className="
                   border-b
                   border-secondary
                 "
-              >
-                <td className="p-4">
-                  <img
-                    src={product.image}
-                    alt={product.title}
-                    className="
+                >
+                  <td className="p-4">
+                    <img
+                      src={product.image}
+                      alt={product.title}
+                      className="
                       w-16
                       h-16
                       object-cover
                       rounded
                     "
-                  />
-                </td>
+                    />
+                  </td>
 
-                <td className="p-4">{product.title}</td>
+                  <td className="p-4">{product.title}</td>
 
-                <td className="p-4">${product.price}</td>
+                  <td className="p-4">${product.price}</td>
 
-                <td className="p-4">{product.quantityInStock}</td>
+                  <td className="p-4">{product.quantityInStock}</td>
 
-                <td className="p-4">
-                  {product.salePercentage > 0
-                    ? `${product.salePercentage}%`
-                    : "-"}
-                </td>
+                  <td className="p-4">
+                    {product.salePercentage > 0
+                      ? `${product.salePercentage}%`
+                      : "-"}
+                  </td>
 
-                <td className="p-4">
-                  {product.category?.name || "No Category"}
-                </td>
+                  <td className="p-4">
+                    {product.category?.name || "No Category"}
+                  </td>
 
-                <td className="p-4">⭐ {product.review}</td>
+                  <td className="p-4">⭐ {product.review}</td>
 
-                <td className="p-4">
-                  <div
-                    className="
+                  <td className="p-4">
+                    <div
+                      className="
                       flex
                       gap-2
                     "
-                  >
-                    <button
-                      onClick={() => {
-                        setSelectedProduct(product);
+                    >
+                      <button
+                        onClick={() => {
+                          setSelectedProduct(product);
 
-                        setShowEditModal(true);
-                      }}
-                      className="
+                          setShowEditModal(true);
+                        }}
+                        className="
                         bg-primary
                         text-white
                         px-3
                         py-1
                         rounded
                       "
-                    >
-                      Edit
-                    </button>
+                      >
+                        Edit
+                      </button>
 
-                    <button
-                      onClick={() => {
-                        setSelectedProductId(product._id);
+                      <button
+                        onClick={() => {
+                          setSelectedProductId(product._id);
 
-                        setShowDeleteModal(true);
-                      }}
-                      className="
+                          setShowDeleteModal(true);
+                        }}
+                        className="
                         bg-danger
                         text-white
                         px-3
                         py-1
                         rounded
                       "
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
 
       {/* PAGINATION */}
-
-      <div
-        className="
+      {totalPages > 1 && products.length > 0 && (
+        <div
+          className="
           flex
           justify-center
           items-center
           gap-3
           mt-6
         "
-      >
-        <button
-          disabled={currentPage === 1}
-          onClick={() => setCurrentPage(currentPage - 1)}
-          className="
+        >
+          <button
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(currentPage - 1)}
+            className="
             px-4
             py-2
             border
             rounded-lg
             disabled:opacity-50
           "
-        >
-          Previous
-        </button>
+          >
+            Previous
+          </button>
 
-        {Array.from({
-          length: totalPages,
-        }).map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentPage(index + 1)}
-            className={`
+          {Array.from({
+            length: totalPages,
+          }).map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentPage(index + 1)}
+              className={`
 
                 px-4
                 py-2
@@ -339,25 +352,26 @@ function AdminProducts() {
                 }
 
               `}
-          >
-            {index + 1}
-          </button>
-        ))}
+            >
+              {index + 1}
+            </button>
+          ))}
 
-        <button
-          disabled={currentPage === totalPages}
-          onClick={() => setCurrentPage(currentPage + 1)}
-          className="
+          <button
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage(currentPage + 1)}
+            className="
             px-4
             py-2
             border
             rounded-lg
             disabled:opacity-50
           "
-        >
-          Next
-        </button>
-      </div>
+          >
+            Next
+          </button>
+        </div>
+      )}
 
       {/* CREATE MODAL */}
 

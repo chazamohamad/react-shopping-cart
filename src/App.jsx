@@ -46,6 +46,24 @@ function App() {
         <Route path="/product-details/:id" element={<ProductDetails />} />
 
         <Route
+          path="/track-order"
+          element={
+            <ProtectedRouteCustomer>
+              <TrackOrder />
+            </ProtectedRouteCustomer>
+          }
+        />
+
+        <Route
+          path="/my-orders"
+          element={
+            <ProtectedRoute>
+              <MyOrders />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/cart"
           element={
             <ProtectedRouteCustomer>
@@ -81,16 +99,6 @@ function App() {
       </Route>
       <Route path="/checkout" element={<Checkout />} />
       <Route path="/order-success" element={<OrderSuccess />} />
-      <Route path="/track-order" element={<TrackOrder />} />
-
-      <Route
-        path="/my-orders"
-        element={
-          <ProtectedRoute>
-            <MyOrders />
-          </ProtectedRoute>
-        }
-      />
     </Routes>
   );
 }

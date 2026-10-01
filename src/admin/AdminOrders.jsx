@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { FaFilter } from "react-icons/fa";
 
 import API from "../services/api";
@@ -21,14 +21,33 @@ function AdminOrders() {
   const [selectedOrderId, setSelectedOrderId] = useState(null);
 
   const [searchTerm, setSearchTerm] = useState("");
+
   const [searchQuery, setSearchQuery] = useState("");
+
   const [statusFilter, setStatusFilter] = useState("");
+
   const [openFilter, setOpenFilter] = useState(false);
 
-  const ordersPerPage = 5;
+  const filterRef = useRef(null);
 
   // selected order for modal
   const [selectedOrder, setSelectedOrder] = useState(null);
+
+  const ordersPerPage = 5;
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (filterRef.current && !filterRef.current.contains(event.target)) {
+        setOpenFilter(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const getOrders = async () => {
     try {
@@ -55,6 +74,14 @@ function AdminOrders() {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const clearFilters = () => {
+    setStatusFilter("");
+
+    setCurrentPage(1);
+
+    setOpenFilter(false);
   };
 
   useEffect(() => {
@@ -150,6 +177,7 @@ focus:ring-primary
         />
 
         <div
+          ref={filterRef}
           className="
 relative
 "
@@ -279,6 +307,24 @@ hover:bg-green-100
               >
                 ✅ Completed
               </button>
+              <button
+                onClick={clearFilters}
+                className="
+w-full
+mt-3
+border
+border-danger
+text-danger
+px-3
+py-2
+rounded-lg
+font-bold
+hover:bg-red-50
+transition
+"
+              >
+                Clear Filter
+              </button>
             </div>
           )}
         </div>
@@ -317,59 +363,74 @@ hover:bg-green-100
           </thead>
 
           <tbody>
-            {orders.map((order) => (
-              <tr
-                key={order._id}
-                className="
+            {orders.length === 0 ? (
+              <tr>
+                <td
+                  colSpan="6"
+                  className="
+text-center
+py-10
+text-gray-500
+font-bold
+"
+                >
+                  No orders found
+                </td>
+              </tr>
+            ) : (
+              orders.map((order) => (
+                <tr
+                  key={order._id}
+                  className="
                   border-b
                   border-secondary
                   text-center
                 "
-              >
-                <td className="p-4">{order.orderNumber}</td>
+                >
+                  <td className="p-4">{order.orderNumber}</td>
 
-                <td className="p-4">{order.userId?.FullName}</td>
+                  <td className="p-4">{order.userId?.FullName}</td>
 
-                <td className="p-4 font-bold">${order.totalPrice}</td>
+                  <td className="p-4 font-bold">${order.totalPrice}</td>
 
-                <td className="p-4">
-                  {new Date(order.createdAt).toLocaleDateString()}
-                </td>
+                  <td className="p-4">
+                    {new Date(order.createdAt).toLocaleDateString()}
+                  </td>
 
-                {/* UPDATE STATUS */}
-                <td>
-                  <select
-                    value={order.status}
-                    onChange={(e) => updateStatus(order._id, e.target.value)}
-                    className="
+                  {/* UPDATE STATUS */}
+                  <td>
+                    <select
+                      value={order.status}
+                      onChange={(e) => updateStatus(order._id, e.target.value)}
+                      className="
                         border
                         border-secondary
                         rounded-lg
                         p-2
                         text-primary
                       "
-                  >
-                    <option value="pending">Pending</option>
+                    >
+                      <option value="pending">Pending</option>
 
-                    <option value="ondelivery">On Delivery</option>
+                      <option value="ondelivery">On Delivery</option>
 
-                    <option value="completed">Completed</option>
-                  </select>
-                </td>
+                      <option value="completed">Completed</option>
+                    </select>
+                  </td>
 
-                <td className="p-4">
-                  <div
-                    className="
+                  <td className="p-4">
+                    <div
+                      className="
 flex
 gap-2
 justify-center
 "
-                  >
-                    {/* VIEW DETAILS */}
+                    >
+                      {/* VIEW DETAILS */}
 
-                    <button
-                      onClick={() => getOrderDetails(order._id)}
-                      className="
+                      <button
+                        onClick={() => getOrderDetails(order._id)}
+                        className="
 bg-secondary
 text-primary
 px-3
@@ -378,19 +439,19 @@ rounded-lg
 hover:bg-hover
 transition
 "
-                    >
-                      View Details
-                    </button>
+                      >
+                        View Details
+                      </button>
 
-                    {/* DELETE ORDER */}
+                      {/* DELETE ORDER */}
 
-                    <button
-                      onClick={() => {
-                        setSelectedOrderId(order._id);
+                      <button
+                        onClick={() => {
+                          setSelectedOrderId(order._id);
 
-                        setShowDeleteModal(true);
-                      }}
-                      className="
+                          setShowDeleteModal(true);
+                        }}
+                        className="
 bg-danger
 text-white
 px-3
@@ -399,31 +460,32 @@ rounded-lg
 hover:opacity-80
 transition
 "
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
 
         {/* PAGINATION */}
-
-        <div
-          className="
+        {totalPages > 1 && orders.length > 0 && (
+          <div
+            className="
 flex
 justify-center
 items-center
 gap-3
 mt-6
 "
-        >
-          <button
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage(currentPage - 1)}
-            className="
+          >
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(currentPage - 1)}
+              className="
 px-4
 py-2
 border
@@ -431,15 +493,15 @@ border-secondary
 rounded-lg
 disabled:opacity-50
 "
-          >
-            Previous
-          </button>
+            >
+              Previous
+            </button>
 
-          {Array.from({ length: totalPages }).map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentPage(index + 1)}
-              className={`
+            {Array.from({ length: totalPages }).map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentPage(index + 1)}
+                className={`
 
 px-4
 py-2
@@ -452,15 +514,15 @@ ${
 }
 
 `}
-            >
-              {index + 1}
-            </button>
-          ))}
+              >
+                {index + 1}
+              </button>
+            ))}
 
-          <button
-            disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage(currentPage + 1)}
-            className="
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(currentPage + 1)}
+              className="
 px-4
 py-2
 border
@@ -468,10 +530,11 @@ border-secondary
 rounded-lg
 disabled:opacity-50
 "
-          >
-            Next
-          </button>
-        </div>
+            >
+              Next
+            </button>
+          </div>
+        )}
 
         {/* ORDER DETAILS MODAL */}
 
