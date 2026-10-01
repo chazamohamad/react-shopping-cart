@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { Navigate } from "react-router";
+import { jwtDecode } from "jwt-decode";
 
 import API from "../services/api";
 import { useAuth } from "./AuthContext";
@@ -21,7 +22,7 @@ function Login() {
 
   const [loading, setLoading] = useState(false);
 
-  if (user && user.Role !== "admin") {
+  if (user && user.role !== "admin") {
     return <Navigate to="/shop" />;
   }
 
@@ -50,11 +51,13 @@ function Login() {
       const response = await API.post("/api/users/login", formData);
 
       if (response.data.success) {
-        const user = response.data.user;
+        const token = response.data.token;
 
-        login(user);
+        login(token);
 
-        if (user.Role === "admin") {
+        const decodedUser = jwtDecode(token);
+
+        if (decodedUser.role === "admin") {
           navigate("/admin");
         } else {
           navigate("/shop");

@@ -21,6 +21,9 @@ function EditProduct({ product, closeModal, refreshProducts }) {
     review: product.review,
 
     categoryId: product.category?._id || "",
+
+    quantityInStock: product.quantityInStock || 0,
+    salePercentage: product.salePercentage || 0,
   });
 
   // GET CATEGORIES
@@ -174,6 +177,36 @@ function EditProduct({ product, closeModal, refreshProducts }) {
             </option>
           ))}
         </select>
+
+        <input
+          type="number"
+          name="quantityInStock"
+          placeholder="Quantity In Stock"
+          value={formData.quantityInStock}
+          onChange={handleChange}
+          className="
+w-full
+border
+p-3
+mb-3
+rounded-lg
+"
+        />
+
+        <input
+          type="number"
+          name="salePercentage"
+          placeholder="Sale Percentage %"
+          value={formData.salePercentage}
+          onChange={handleChange}
+          className="
+w-full
+border
+p-3
+mb-3
+rounded-lg
+"
+        />
 
         <div className="flex gap-3">
           <button

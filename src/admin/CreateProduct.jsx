@@ -21,6 +21,10 @@ function CreateProduct({ closeModal, refreshProducts }) {
     review: "",
 
     categoryId: "",
+
+    quantityInStock: 0,
+
+    salePercentage: 0,
   });
 
   // GET CATEGORIES
@@ -200,6 +204,36 @@ function CreateProduct({ closeModal, refreshProducts }) {
             </option>
           ))}
         </select>
+
+        <input
+          type="number"
+          name="quantityInStock"
+          placeholder="Quantity In Stock"
+          value={formData.quantityInStock}
+          onChange={handleChange}
+          className="
+w-full
+border
+p-3
+mb-3
+rounded-lg
+"
+        />
+
+        <input
+          type="number"
+          name="salePercentage"
+          placeholder="Sale Percentage %"
+          value={formData.salePercentage}
+          onChange={handleChange}
+          className="
+w-full
+border
+p-3
+mb-5
+rounded-lg
+"
+        />
 
         <div
           className="

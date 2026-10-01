@@ -1,8 +1,19 @@
 import { Link } from "react-router";
 import { useCart } from "./CartContext";
 
-function Product({ _id, title, desc, price, image, review }) {
+function Product({
+  _id,
+  title,
+  desc,
+  price,
+  image,
+  review,
+  salePercentage,
+  quantityInStock,
+}) {
   const { addToCart } = useCart();
+  const finalPrice =
+    salePercentage > 0 ? price - (price * salePercentage) / 100 : price;
 
   return (
     <div className="w-full">
@@ -87,19 +98,92 @@ function Product({ _id, title, desc, price, image, review }) {
 
             <span className="text-gray-700">{review}</span>
           </div>
+          <div
+            className="
+mb-4
+"
+          >
+            {quantityInStock > 0 ? (
+              <p
+                className="
+text-green-600
+font-bold
+text-sm
+"
+              >
+                ✓ In Stock ({quantityInStock})
+              </p>
+            ) : (
+              <p
+                className="
+text-red-600
+font-bold
+text-sm
+"
+              >
+                ✕ Out of Stock
+              </p>
+            )}
+          </div>
 
           {/* PRICE */}
 
-          <h3
-            className="
-              text-primary
-              font-bold
-              text-2xl
-              mb-5
+          <div className="mb-5">
+            {salePercentage > 0 ? (
+              <>
+                <h3
+                  className="
+            text-primary
+            font-bold
+            text-2xl
+          "
+                >
+                  ${finalPrice}
+                </h3>
+
+                <div
+                  className="
+            flex
+            items-center
+            gap-3
+          "
+                >
+                  <span
+                    className="
+              line-through
+              text-gray-400
             "
-          >
-            ${price}
-          </h3>
+                  >
+                    ${price}
+                  </span>
+
+                  <span
+                    className="
+              bg-danger
+              text-white
+              px-2
+              py-1
+              rounded-lg
+              text-sm
+              font-bold
+            "
+                  >
+                    {salePercentage}% OFF
+                  </span>
+                </div>
+              </>
+            ) : (
+              <h3
+                className="
+          text-primary
+          font-bold
+          text-2xl
+        "
+              >
+                ${price}
+              </h3>
+            )}
+          </div>
 
           {/* BUTTONS */}
 
@@ -107,6 +191,7 @@ function Product({ _id, title, desc, price, image, review }) {
             {/* ADD CART */}
 
             <button
+              disabled={quantityInStock === 0}
               className="
                 bg-primary
                 text-white
@@ -121,13 +206,20 @@ function Product({ _id, title, desc, price, image, review }) {
               onClick={() =>
                 addToCart({
                   id: _id,
+
                   title,
-                  price,
+
+                  price: finalPrice,
+
                   image,
+
+                  quantityInStock,
+
+                  salePercentage,
                 })
               }
             >
-              Add to Cart
+              {quantityInStock === 0 ? "Out of Stock" : "Add to Cart"}
             </button>
 
             {/* DETAILS */}

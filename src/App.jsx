@@ -11,6 +11,10 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
+import TrackOrder from "./pages/TrackOrder";
+import MyOrders from "./pages/MyOrders";
+import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRouteCustomer from "./components/ProtectedRouteCustomer";
 
 import AdminLayout from "./admin/AdminLayout";
 import AdminDashboard from "./admin/AdminDashboard";
@@ -41,7 +45,14 @@ function App() {
 
         <Route path="/product-details/:id" element={<ProductDetails />} />
 
-        <Route path="/cart" element={<Cart />} />
+        <Route
+          path="/cart"
+          element={
+            <ProtectedRouteCustomer>
+              <Cart />
+            </ProtectedRouteCustomer>
+          }
+        />
       </Route>
 
       {/* ADMIN */}
@@ -50,7 +61,9 @@ function App() {
         path="/admin"
         element={
           <AdminRoute>
-            <AdminLayout />
+            <ProtectedRoute>
+              <AdminLayout />
+            </ProtectedRoute>
           </AdminRoute>
         }
       >
@@ -68,6 +81,16 @@ function App() {
       </Route>
       <Route path="/checkout" element={<Checkout />} />
       <Route path="/order-success" element={<OrderSuccess />} />
+      <Route path="/track-order" element={<TrackOrder />} />
+
+      <Route
+        path="/my-orders"
+        element={
+          <ProtectedRoute>
+            <MyOrders />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }

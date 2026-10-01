@@ -12,7 +12,7 @@ function AdminRoute({ children }) {
 
   // User is not admin
 
-  if (user.Role !== "admin") {
+  if (user.role !== "admin") {
     return <Navigate to="/shop" />;
   }
 

@@ -121,8 +121,34 @@ function Navbar() {
             </NavLink>
           </li>
 
+          <li>
+            <NavLink
+              to="/track-order"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-secondary font-bold"
+                  : "text-white hover:text-secondary"
+              }
+            >
+              Track Order
+            </NavLink>
+          </li>
+
           {user ? (
             <>
+              <li>
+                <NavLink
+                  to="/my-orders"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "text-secondary font-bold"
+                      : "text-white hover:text-secondary"
+                  }
+                >
+                  My Orders
+                </NavLink>
+              </li>
+
               {/* CART */}
 
               <li>

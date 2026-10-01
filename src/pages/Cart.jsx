@@ -19,6 +19,14 @@ function Cart() {
     clearCart,
   } = useCart();
 
+  const getFinalPrice = (product) => {
+    if (product.salePercentage > 0) {
+      return product.price - (product.price * product.salePercentage) / 100;
+    }
+
+    return product.price;
+  };
+
   if (loading) {
     return <p className="text-center mt-10">Loading cart...</p>;
   }
@@ -26,19 +34,19 @@ function Cart() {
   return (
     <main
       className="
-max-w-7xl
-mx-auto
-px-4
-py-10
-"
+        max-w-7xl
+        mx-auto
+        px-4
+        py-10
+      "
     >
       <h1
         className="
-text-4xl
-font-bold
-mb-8
-text-primary
-"
+          text-4xl
+          font-bold
+          mb-8
+          text-primary
+        "
       >
         Shopping Cart
       </h1>
@@ -50,12 +58,12 @@ text-primary
           <Link
             to="/shop"
             className="
-bg-primary
-text-white
-px-5
-py-2
-rounded-lg
-"
+                bg-primary
+                text-white
+                px-5
+                py-2
+                rounded-lg
+              "
           >
             Go Shopping
           </Link>
@@ -64,54 +72,132 @@ rounded-lg
         <div>
           <div
             className="
-space-y-5
-
-"
+              space-y-5
+            "
           >
             {cart.map((item) => (
               <div
                 key={item.productId._id}
                 className="
-bg-white
-shadow
-rounded-xl
-p-5
-flex
-items-center
-justify-between
-"
+                  bg-white
+                  shadow
+                  rounded-xl
+                  p-5
+                  flex
+                  flex-col
+                  md:flex-row
+                  md:items-center
+                  md:justify-between
+                  gap-5
+                "
               >
                 {/* PRODUCT INFO */}
 
                 <div
                   className="
-flex
-items-center
-gap-5
-"
+                    flex
+                    items-center
+                    gap-5
+                  "
                 >
                   <img
                     src={item.productId.image}
                     alt={item.productId.title}
                     className="
-w-24
-h-24
-object-cover
-rounded
-"
+                      w-24
+                      h-24
+                      object-cover
+                      rounded-lg
+                    "
                   />
 
                   <div>
                     <h2
                       className="
-font-bold
-text-xl
-"
+                        font-bold
+                        text-xl
+                      "
                     >
                       {item.productId.title}
                     </h2>
 
-                    <p>${item.productId.price}</p>
+                    {/* PRICE */}
+
+                    {item.productId.salePercentage > 0 ? (
+                      <div>
+                        <p
+                          className="
+                              font-bold
+                              text-primary
+                              text-lg
+                            "
+                        >
+                          ${getFinalPrice(item.productId)}
+                        </p>
+
+                        <div
+                          className="
+                              flex
+                              items-center
+                              gap-3
+                            "
+                        >
+                          <p
+                            className="
+                                text-gray-400
+                                line-through
+                                text-sm
+                              "
+                          >
+                            ${item.productId.price}
+                          </p>
+
+                          <span
+                            className="
+                                bg-danger
+                                text-white
+                                px-2
+                                py-1
+                                rounded-full
+                                text-xs
+                                font-bold
+                              "
+                          >
+                            {item.productId.salePercentage}% OFF
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <p
+                        className="
+                            font-bold
+                            text-primary
+                          "
+                      >
+                        ${item.productId.price}
+                      </p>
+                    )}
+
+                    {/* STOCK */}
+
+                    <p
+                      className={`
+                        text-sm
+                        font-bold
+                        mt-2
+
+                        ${
+                          item.productId.quantityInStock > 0
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }
+
+                      `}
+                    >
+                      {item.productId.quantityInStock > 0
+                        ? `In Stock (${item.productId.quantityInStock})`
+                        : "Out of Stock"}
+                    </p>
                   </div>
                 </div>
 
@@ -119,49 +205,72 @@ text-xl
 
                 <div
                   className="
-flex
-items-center
-gap-3
-"
+                    flex
+                    items-center
+                    gap-3
+                  "
                 >
                   <button
                     onClick={() => decreaseQuantity(item.productId._id)}
                     className="
-bg-background
-px-3
-py-1
-rounded
-"
+                      bg-background
+                      px-3
+                      py-1
+                      rounded-lg
+                      font-bold
+                    "
                   >
                     -
                   </button>
 
-                  <span>{item.quantity}</span>
+                  <span
+                    className="
+                      font-bold
+                    "
+                  >
+                    {item.quantity}
+                  </span>
 
                   <button
+                    disabled={item.quantity >= item.productId.quantityInStock}
                     onClick={() => increaseQuantity(item.productId._id)}
                     className="
-bg-background
-px-3
-py-1
-rounded
-"
+                      bg-background
+                      px-3
+                      py-1
+                      rounded-lg
+                      font-bold
+                      disabled:opacity-40
+                      disabled:cursor-not-allowed
+                    "
                   >
                     +
                   </button>
                 </div>
 
-                {/* DELETE */}
+                {/* ITEM TOTAL */}
+
+                <div
+                  className="
+                    font-bold
+                    text-primary
+                    text-lg
+                  "
+                >
+                  ${getFinalPrice(item.productId) * item.quantity}
+                </div>
+
+                {/* REMOVE */}
 
                 <button
                   onClick={() => removeFromCart(item.productId._id)}
                   className="
-bg-danger
-text-white
-px-4
-py-2
-rounded
-"
+                    bg-danger
+                    text-white
+                    px-4
+                    py-2
+                    rounded-lg
+                  "
                 >
                   Remove
                 </button>
@@ -173,76 +282,93 @@ rounded
 
           <div
             className="
-mt-10
-border
-border-primary
-text-white
-p-6
-rounded-xl
-"
+              mt-10
+              border
+              border-primary
+              p-6
+              rounded-xl
+              bg-white
+            "
           >
-            <h2
+            <div
               className="
-text-2xl
-font-bold
-text-primary
-"
+                flex
+                justify-between
+                items-center
+                mb-5
+              "
             >
-              Total: ${totalPrice}
-            </h2>
+              <h2
+                className="
+                  text-2xl
+                  font-bold
+                  text-primary
+                "
+              >
+                Total:
+              </h2>
 
-            <button
-              onClick={clearCart}
-              className="
-    bg-danger
-    text-white
-    px-5
-    py-3
-    rounded-lg
-    hover:bg-hover
-    transition
-    font-bold
-  "
-            >
-              Clear Cart
-            </button>
+              <h2
+                className="
+                  text-3xl
+                  font-bold
+                  text-primary
+                "
+              >
+                ${totalPrice}
+              </h2>
+            </div>
 
-            <Link
-              to="/shop"
+            <div
               className="
-inline-block
-mt-5
-bg-primary
-text-white
-hover:bg-secondary
-hover:text-primary
-px-5
-py-2
-rounded
-"
+                flex
+                flex-wrap
+                gap-4
+              "
             >
-              Continue Shopping
-            </Link>
+              <button
+                onClick={clearCart}
+                className="
+                  bg-danger
+                  text-white
+                  px-5
+                  py-3
+                  rounded-lg
+                  font-bold
+                "
+              >
+                Clear Cart
+              </button>
+
+              <Link
+                to="/shop"
+                className="
+                  bg-secondary
+                  text-primary
+                  px-5
+                  py-3
+                  rounded-lg
+                  font-bold
+                "
+              >
+                Continue Shopping
+              </Link>
+
+              <Link
+                to="/checkout"
+                className="
+                  bg-primary
+                  text-secondary
+                  px-6
+                  py-3
+                  rounded-lg
+                  font-bold
+                "
+              >
+                Checkout Order
+              </Link>
+            </div>
           </div>
-          {cart.length > 0 && (
-            <Link
-              to="/checkout"
-              className="
-        inline-block
-        mt-5
-        bg-primary
-        text-secondary
-        px-6
-        py-3
-        rounded-lg
-        font-bold
-        hover:bg-hover
-        transition
-      "
-            >
-              Checkout Order
-            </Link>
-          )}
         </div>
       )}
     </main>

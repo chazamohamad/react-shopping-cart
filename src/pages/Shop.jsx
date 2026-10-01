@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-// import { Link } from "react-router";
-// import axios from "axios";
+
 import API from "../services/api.js";
 
 import Product from "./Product.jsx";
@@ -15,22 +14,37 @@ function Shop() {
 
   const [searchTerm, setSearchTerm] = useState("");
 
+  const [searchQuery, setSearchQuery] = useState("");
+
   const [currentPage, setCurrentPage] = useState(1);
+
+  const [totalPages, setTotalPages] = useState(1);
 
   const productsPerPage = 6;
 
-  // GET PRODUCTS FROM BACKEND
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchQuery(searchTerm);
+    }, 1000);
 
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [searchTerm]);
+
+  // GET PRODUCTS FROM BACKEND WITH PAGINATION
   useEffect(() => {
     async function getProducts() {
       try {
-        // const response = await axios.get(
-        //   `${import.meta.env.VITE_API_URL}/api/products`,
-        // );
+        setLoading(true);
 
-        const response = await API.get("/api/products");
+        const response = await API.get(
+          `/api/products?page=${currentPage}&limit=${productsPerPage}&search=${searchQuery}`, //1,6,-
+        );
 
-        setProducts(response.data);
+        setProducts(response.data.products); //awal 6 products(0..5)
+
+        setTotalPages(response.data.totalPages); //4 pages
       } catch (error) {
         setError("Failed to fetch products");
       } finally {
@@ -39,26 +53,7 @@ function Shop() {
     }
 
     getProducts();
-  }, []);
-
-  // SEARCH FILTER
-
-  const filteredProducts = products.filter((product) =>
-    product.title.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
-
-  // PAGINATION
-
-  const indexOfLastProduct = currentPage * productsPerPage;
-
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-
-  const currentProducts = filteredProducts.slice(
-    indexOfFirstProduct,
-    indexOfLastProduct,
-  );
-
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+  }, [currentPage, searchQuery]);
 
   return (
     <main
@@ -67,16 +62,12 @@ function Shop() {
         mx-auto
         px-6
         py-6
-        
       "
     >
-      {/* TITLE + CART */}
+      {/* TITLE */}
 
       <div
         className="
-          flex
-          justify-between
-          items-center
           mb-8
         "
       >
@@ -84,7 +75,7 @@ function Shop() {
           className="
             text-4xl
             font-bold
-          text-primary
+            text-primary
           "
         >
           Our Products
@@ -98,16 +89,16 @@ function Shop() {
         placeholder="Search by product title..."
         className="
           w-full
-  border
-  border-secondary
-  rounded-lg
-  px-4
-  py-3
-  mb-10
-  bg-white
-  focus:outline-none
-  focus:ring-2
-  focus:ring-primary
+          border
+          border-secondary
+          rounded-lg
+          px-4
+          py-3
+          mb-10
+          bg-white
+          focus:outline-none
+          focus:ring-2
+          focus:ring-primary
         "
         value={searchTerm}
         onChange={(event) => {
@@ -122,15 +113,16 @@ function Shop() {
       {loading && (
         <div
           className="
-      grid
-      grid-cols-1
-      sm:grid-cols-2
-      lg:grid-cols-3
-      xl:grid-cols-3
-      gap-10
-    "
+            grid
+            grid-cols-1
+            sm:grid-cols-2
+            lg:grid-cols-3
+            gap-10
+          "
         >
-          {Array.from({ length: 6 }).map((_, index) => (
+          {Array.from({
+            length: 6,
+          }).map((_, index) => (
             <ProductSkeleton key={index} />
           ))}
         </div>
@@ -153,18 +145,17 @@ function Shop() {
 
       {!loading && !error && (
         <>
-          {currentProducts.length > 0 ? (
+          {products.length > 0 ? (
             <div
               className="
-                grid
-                grid-cols-1
-                sm:grid-cols-2
-                lg:grid-cols-3
-                xl:grid-cols-3
-                gap-10
-              "
+      grid
+      grid-cols-1
+      sm:grid-cols-2
+      lg:grid-cols-3
+      gap-10
+    "
             >
-              {currentProducts.map((product) => (
+              {products.map((product) => (
                 <Product
                   key={product._id}
                   _id={product._id}
@@ -173,17 +164,13 @@ function Shop() {
                   price={product.price}
                   image={product.image}
                   review={product.review}
+                  salePercentage={product.salePercentage}
+                  quantityInStock={product.quantityInStock}
                 />
               ))}
             </div>
           ) : (
-            <p
-              className="
-                text-center
-              "
-            >
-              No products found.
-            </p>
+            <p className="text-center">No products found.</p>
           )}
 
           {/* PAGINATION */}
@@ -194,44 +181,44 @@ function Shop() {
                 flex
                 justify-center
                 gap-3
-                mt-6
+                mt-8
               "
             >
               <button
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
                 className="
-                 px-4
-py-2
-border
-border-secondary
-font-bold
-rounded-lg
-text-primary
-hover:bg-secondary
-transition
+                  px-4
+                  py-2
+                  border
+                  border-secondary
+                  rounded-lg
+                  font-bold
+                  disabled:opacity-50
                 "
               >
                 Previous
               </button>
 
-              {Array.from({ length: totalPages }, (_, index) => (
+              {Array.from({
+                length: totalPages,
+              }).map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentPage(index + 1)}
                   className={`
-                        px-4
-                        py-2
-                        border
-                        rounded-lg
 
-                        ${
-                          currentPage === index + 1
-                            ? "bg-primary text-white"
-                            : "bg-secondary"
-                        }
+                      px-4
+                      py-2
+                      rounded-lg
 
-                      `}
+                      ${
+                        currentPage === index + 1
+                          ? "bg-primary text-white"
+                          : "bg-secondary text-primary"
+                      }
+
+                    `}
                 >
                   {index + 1}
                 </button>
@@ -241,15 +228,13 @@ transition
                 disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage(currentPage + 1)}
                 className="
-                 px-4
-py-2
-border
-border-secondary
-font-bold
-rounded-lg
-text-primary
-hover:bg-secondary
-transition
+                  px-4
+                  py-2
+                  border
+                  border-secondary
+                  rounded-lg
+                  font-bold
+                  disabled:opacity-50
                 "
               >
                 Next

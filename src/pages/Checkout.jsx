@@ -13,6 +13,14 @@ function Checkout() {
 
   const { user } = useAuth();
 
+  const getFinalPrice = (product) => {
+    if (product.salePercentage > 0) {
+      return product.price - (product.price * product.salePercentage) / 100;
+    }
+
+    return product.price;
+  };
+
   const [formData, setFormData] = useState({
     PhoneNumber: "",
 
@@ -53,7 +61,7 @@ function Checkout() {
 
           quantity: item.quantity,
 
-          price: item.productId.price,
+          price: getFinalPrice(item.productId),
         })),
 
         totalPrice,
@@ -417,7 +425,7 @@ function Checkout() {
                         text-primary
                       "
                   >
-                    ${item.productId.price * item.quantity}
+                    ${getFinalPrice(item.productId) * item.quantity}
                   </p>
                 </div>
               </div>

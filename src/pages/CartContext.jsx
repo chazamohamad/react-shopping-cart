@@ -35,8 +35,6 @@ export function CartProvider({ children }) {
 
       setTotalPrice(response.data.totalPrice);
     } catch (error) {
-      // if user has no cart yet
-
       setCart([]);
 
       setTotalPrice(0);
@@ -51,10 +49,25 @@ export function CartProvider({ children }) {
     getCart();
   }, [user]);
 
-  // ADD PRODUCT
+  // GET FINAL PRICE AFTER SALE
 
+  const getFinalPrice = (product) => {
+    if (product.salePercentage > 0) {
+      return product.price - (product.price * product.salePercentage) / 100;
+    }
+
+    return product.price;
+  };
+
+  // ADD PRODUCT
   const addToCart = async (product) => {
-    if (!user) {
+    if (!user) return;
+
+    // CHECK STOCK
+
+    if (product.quantityInStock <= 0) {
+      console.log("Out of stock");
+
       return;
     }
 
@@ -78,13 +91,18 @@ export function CartProvider({ children }) {
   };
 
   // INCREASE QUANTITY
-
   const increaseQuantity = async (productId) => {
     if (!user) return;
 
     const item = cart.find((item) => item.productId._id === productId);
 
     if (!item) return;
+
+    // CHECK STOCK
+
+    if (item.quantity >= item.productId.quantityInStock) {
+      return;
+    }
 
     const newQuantity = item.quantity + 1;
 
@@ -96,8 +114,6 @@ export function CartProvider({ children }) {
           quantity: newQuantity,
         },
       );
-
-      // update UI directly without refresh
 
       setCart((prevCart) =>
         prevCart.map((item) =>
@@ -145,6 +161,7 @@ export function CartProvider({ children }) {
           item.productId._id === productId
             ? {
                 ...item,
+
                 quantity: newQuantity,
               }
             : item,
@@ -187,11 +204,15 @@ export function CartProvider({ children }) {
     }
   };
 
-  // CALCULATE TOTAL PRICE
+  // CALCULATE TOTAL PRICE WITH SALE
 
   useEffect(() => {
     const total = cart.reduce(
-      (sum, item) => sum + item.productId.price * item.quantity,
+      (sum, item) => {
+        const price = getFinalPrice(item.productId);
+
+        return sum + price * item.quantity;
+      },
 
       0,
     );

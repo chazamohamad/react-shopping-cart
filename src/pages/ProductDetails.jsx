@@ -61,6 +61,11 @@ function ProductDetails() {
     );
   }
 
+  const finalPrice =
+    product.salePercentage > 0
+      ? product.price - (product.price * product.salePercentage) / 100
+      : product.price;
+
   const renderStars = (rating) => {
     const stars = [];
 
@@ -159,16 +164,86 @@ function ProductDetails() {
             <span className="text-gray-600">({product.review})</span>
           </div>
 
-          <h2
-            className="
-              text-3xl
-              font-bold
-              text-primary
-              mb-8
-            "
-          >
-            ${product.price}
-          </h2>
+          <div className="mb-8">
+            {product.salePercentage > 0 ? (
+              <div>
+                <h2
+                  className="
+          text-3xl
+          font-bold
+          text-primary
+        "
+                >
+                  ${finalPrice}
+                </h2>
+
+                <div
+                  className="
+          flex
+          items-center
+          gap-3
+          mt-2
+        "
+                >
+                  <span
+                    className="
+            text-gray-400
+            line-through
+            text-lg
+          "
+                  >
+                    ${product.price}
+                  </span>
+
+                  <span
+                    className="
+            bg-danger
+            text-white
+            px-3
+            py-1
+            rounded-full
+            text-sm
+            font-bold
+          "
+                  >
+                    {product.salePercentage}% OFF
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <h2
+                className="
+        text-3xl
+        font-bold
+        text-primary
+      "
+              >
+                ${product.price}
+              </h2>
+            )}
+          </div>
+
+          <div className="mb-6">
+            {product.quantityInStock > 0 ? (
+              <p
+                className="
+text-green-600
+font-bold
+"
+              >
+                ✓ In Stock ({product.quantityInStock} available)
+              </p>
+            ) : (
+              <p
+                className="
+text-red-600
+font-bold
+"
+              >
+                ✕ Out of Stock
+              </p>
+            )}
+          </div>
 
           {/* BUTTONS */}
 
@@ -181,30 +256,37 @@ function ProductDetails() {
             {/* ADD TO CART */}
 
             <button
+              disabled={product.quantityInStock === 0}
               className="
-                bg-primary
-                text-secondary
-                px-6
-                py-3
-                rounded-lg
-                hover:bg-secondary
-                  cursor-pointer
-                hover:text-primary
-                transition
-              "
+    bg-primary
+    text-secondary
+    px-6
+    py-3
+    rounded-lg
+    hover:bg-secondary
+    cursor-pointer
+    hover:text-primary
+    transition
+    disabled:bg-gray-400
+    disabled:cursor-not-allowed
+  "
               onClick={() =>
                 addToCart({
                   id: product._id,
 
                   title: product.title,
 
-                  price: product.price,
+                  price: finalPrice,
 
                   image: product.image,
+
+                  salePercentage: product.salePercentage,
+
+                  quantityInStock: product.quantityInStock,
                 })
               }
             >
-              Add to Cart
+              {product.quantityInStock === 0 ? "Out of Stock" : "Add to Cart"}
             </button>
 
             {/* BACK TO SHOP */}
