@@ -1,35 +1,43 @@
+import { useState } from "react";
 import { Outlet } from "react-router";
 
 import AdminSidebar from "./AdminSidebar";
 import AdminHeader from "./AdminHeader";
 
 function AdminLayout() {
+  const [openSidebar, setOpenSidebar] = useState(false);
+
   return (
     <div
       className="
-      min-h-screen
-    bg-background
-      flex
-    "
+        h-screen
+        bg-background
+        flex
+        overflow-hidden
+      "
     >
       {/* SIDEBAR */}
+      <AdminSidebar openSidebar={openSidebar} setOpenSidebar={setOpenSidebar} />
 
-      <AdminSidebar />
-
+      {/* RIGHT SIDE */}
       <div
         className="
-        flex-1
-        flex
-        flex-col
-      "
+          flex-1
+          flex
+          flex-col
+          overflow-hidden
+        "
       >
-        {/* HEADER */}
+        <AdminHeader setOpenSidebar={setOpenSidebar} />
 
-        <AdminHeader />
-
-        {/* PAGE CONTENT */}
-
-        <main className="p-6">
+        <main
+          className="
+            flex-1
+            overflow-y-auto
+            p-4
+            md:p-6
+          "
+        >
           <Outlet />
         </main>
       </div>

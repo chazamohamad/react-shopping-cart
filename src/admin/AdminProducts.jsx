@@ -3,14 +3,21 @@ import { useEffect, useState } from "react";
 import API from "../services/api";
 
 import Modal from "../components/Modal";
+
 import CreateProduct from "./CreateProduct";
+
 import EditProduct from "./EditProduct";
+
 import TableSkeleton from "../components/TableSkeleton";
+
+import LoadingButton from "../components/LoadingButton";
 
 function AdminProducts() {
   const [products, setProducts] = useState([]);
 
   const [loading, setLoading] = useState(true);
+
+  const [deleting, setDeleting] = useState(false);
 
   // PAGINATION
 
@@ -34,29 +41,27 @@ function AdminProducts() {
 
   const [showEditModal, setShowEditModal] = useState(false);
 
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+
   const [selectedProductId, setSelectedProductId] = useState(null);
 
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  // DEBOUNCE SEARCH
+  // SEARCH DEBOUNCE
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setSearchQuery(searchTerm);
     }, 500);
 
-    return () => {
-      clearTimeout(timer);
-    };
+    return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  // GET PRODUCTS WHEN PAGE OR SEARCH CHANGES
+  // GET PRODUCTS
 
   useEffect(() => {
     getProducts();
   }, [currentPage, searchQuery]);
-
-  // GET PRODUCTS
 
   const getProducts = async () => {
     try {
@@ -76,17 +81,23 @@ function AdminProducts() {
     }
   };
 
-  // DELETE PRODUCT
-
   const deleteProduct = async (id) => {
+    if (deleting) return;
+
     try {
+      setDeleting(true);
+
       await API.delete(`/api/products/${id}`);
 
-      getProducts();
+      await getProducts();
 
       setShowDeleteModal(false);
+
+      setSelectedProductId(null);
     } catch (error) {
       console.log(error);
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -100,35 +111,63 @@ function AdminProducts() {
 
       <div
         className="
-          flex
-          justify-between
-          items-center
-          mb-6
-        "
+flex
+flex-col
+md:flex-row
+md:justify-between
+md:items-center
+gap-5
+mb-8
+"
       >
-        <h1
-          className="
-            text-3xl
-            font-bold
-            text-primary
-          "
-        >
-          Products Management
-        </h1>
+        <div>
+          <p
+            className="
+text-accent
+text-xs
+uppercase
+tracking-widest
+font-bold
+"
+          >
+            PRODUCT INVENTORY
+          </p>
+
+          <h1
+            className="
+text-3xl
+font-bold
+text-primary
+"
+          >
+            Products Management
+          </h1>
+
+          <p
+            className="
+text-gray-500
+mt-2
+"
+          >
+            Manage products, stock and pricing
+          </p>
+        </div>
 
         <button
           onClick={() => setShowCreateModal(true)}
           className="
-            bg-primary
-            text-white
-            px-5
-            py-3
-            rounded-lg
-            hover:bg-secondary
-            transition
-          "
+bg-primary
+text-white
+px-6
+py-3
+rounded-xl
+font-bold
+shadow-sm
+hover:bg-hover
+transition
+"
         >
-          + Create Product
+          + Add Product
         </button>
       </div>
 
@@ -136,8 +175,8 @@ function AdminProducts() {
 
       <div
         className="
-          mb-8
-        "
+mb-8
+"
       >
         <input
           type="search"
@@ -149,123 +188,237 @@ function AdminProducts() {
             setCurrentPage(1);
           }}
           className="
-            w-full
-            border
-            border-secondary
-            rounded-xl
-            px-5
-            py-4
-            bg-white
-            shadow-sm
-            focus:outline-none
-            focus:ring-2
-            focus:ring-primary
-          "
+w-full
+bg-white
+border
+border-secondary
+rounded-2xl
+px-5
+py-4
+outline-none
+shadow-sm
+focus:ring-2
+focus:ring-accent/30
+focus:border-accent
+"
         />
       </div>
 
       {/* TABLE */}
-
       <div
         className="
-          bg-white
-          border
-          border-secondary
-          rounded-xl
-          shadow
-          overflow-x-auto
-        "
+hidden
+md:block
+w-full
+bg-white
+border
+border-secondary
+rounded-2xl
+shadow-sm
+overflow-x-auto
+"
       >
         <table
           className="
-            w-full
-            text-left
-          "
+w-full
+min-w-[850px]
+text-left
+"
         >
           <thead
             className="
-              bg-primary
-              text-white
-            "
+bg-primary
+text-white
+"
           >
             <tr>
               <th className="p-4">Image</th>
 
-              <th className="p-4">Title</th>
+              <th className="p-4">Product</th>
 
-              <th className="p-4">Price</th>
+              <th className="p-4 text-center">Price</th>
 
-              <th className="p-4">Stock</th>
+              <th className="p-4 text-center">Stock</th>
 
-              <th className="p-4">Sale</th>
+              <th
+                className="
+p-4
+text-center
+hidden
+sm:table-cell
+"
+              >
+                Sale
+              </th>
 
-              <th className="p-4">Category</th>
+              <th
+                className="
+p-4
+text-center
+hidden
+lg:table-cell
+"
+              >
+                Category
+              </th>
 
-              <th className="p-4">Review</th>
+              <th
+                className="
+p-4
+text-center
+hidden
+md:table-cell
+"
+              >
+                Review
+              </th>
 
-              <th className="p-4">Actions</th>
+              <th className="p-4 text-center">Actions</th>
             </tr>
           </thead>
 
           <tbody>
             {products.length === 0 ? (
-              <p
-                className="
+              <tr>
+                <td
+                  colSpan="8"
+                  className="
 text-center
+py-12
 text-gray-500
-py-10
 font-bold
 "
-              >
-                No data found
-              </p>
+                >
+                  No products found
+                </td>
+              </tr>
             ) : (
               products.map((product) => (
                 <tr
                   key={product._id}
                   className="
-                  border-b
-                  border-secondary
-                "
+border-b
+border-secondary
+hover:bg-background
+transition
+"
                 >
                   <td className="p-4">
                     <img
                       src={product.image}
                       alt={product.title}
                       className="
-                      w-16
-                      h-16
-                      object-cover
-                      rounded
-                    "
+w-16
+h-16
+object-cover
+rounded-xl
+border
+border-secondary
+"
                     />
                   </td>
 
-                  <td className="p-4">{product.title}</td>
-
-                  <td className="p-4">${product.price}</td>
-
-                  <td className="p-4">{product.quantityInStock}</td>
-
                   <td className="p-4">
+                    <p
+                      className="
+font-semibold
+text-primary
+"
+                    >
+                      {product.title}
+                    </p>
+                  </td>
+
+                  <td
+                    className="
+p-4
+text-center
+font-semibold
+text-primary
+"
+                  >
+                    ${product.price}
+                  </td>
+
+                  <td
+                    className="
+p-4
+text-center
+text-primary
+"
+                  >
+                    {product.quantityInStock}
+                  </td>
+
+                  <td
+                    className="
+p-4
+text-center
+text-accent
+font-bold
+hidden
+sm:table-cell
+"
+                  >
                     {product.salePercentage > 0
                       ? `${product.salePercentage}%`
                       : "-"}
                   </td>
 
-                  <td className="p-4">
+                  <td
+                    className="
+p-4
+text-center
+text-gray-600
+hidden
+lg:table-cell
+"
+                  >
                     {product.category?.name || "No Category"}
                   </td>
 
-                  <td className="p-4">⭐ {product.review}</td>
+                  <td
+                    className="
+p-4
+text-center
+text-gray-600
+hidden
+md:table-cell
+"
+                  >
+                    ⭐ {product.review}
+                  </td>
 
                   <td className="p-4">
                     <div
                       className="
-                      flex
-                      gap-2
-                    "
+flex
+justify-center
+gap-2
+"
                     >
+                      <button
+                        onClick={() => {
+                          setSelectedProduct(product);
+
+                          setShowDetailsModal(true);
+                        }}
+                        className="
+border
+border-primary
+text-primary
+px-3
+py-2
+rounded-lg
+text-sm
+font-semibold
+hover:bg-secondary
+transition
+"
+                      >
+                        View
+                      </button>
+
                       <button
                         onClick={() => {
                           setSelectedProduct(product);
@@ -273,12 +426,16 @@ font-bold
                           setShowEditModal(true);
                         }}
                         className="
-                        bg-primary
-                        text-white
-                        px-3
-                        py-1
-                        rounded
-                      "
+bg-primary
+text-white
+px-3
+py-2
+rounded-lg
+text-sm
+font-semibold
+hover:bg-hover
+transition
+"
                       >
                         Edit
                       </button>
@@ -290,12 +447,18 @@ font-bold
                           setShowDeleteModal(true);
                         }}
                         className="
-                        bg-danger
-                        text-white
-                        px-3
-                        py-1
-                        rounded
-                      "
+border
+border-danger
+text-danger
+px-3
+py-2
+rounded-lg
+text-sm
+font-bold
+hover:bg-danger
+hover:text-white
+transition
+"
                       >
                         Delete
                       </button>
@@ -308,27 +471,185 @@ font-bold
         </table>
       </div>
 
+      {/* MOBILE PRODUCT CARDS */}
+
+      <div
+        className="
+md:hidden
+space-y-5
+"
+      >
+        {products.length === 0 ? (
+          <div
+            className="
+bg-white
+border
+border-secondary
+rounded-2xl
+p-8
+text-center
+text-gray-500
+font-bold
+"
+          >
+            No products found
+          </div>
+        ) : (
+          products.map((product) => (
+            <div
+              key={product._id}
+              className="
+bg-white
+border
+border-secondary
+rounded-2xl
+shadow-sm
+p-5
+"
+            >
+              {/* IMAGE */}
+
+              <img
+                src={product.image}
+                alt={product.title}
+                className="
+w-full
+h-56
+object-cover
+rounded-xl
+mb-5
+"
+              />
+
+              {/* TITLE */}
+
+              <h2
+                className="
+text-xl
+font-bold
+text-primary
+mb-4
+"
+              >
+                {product.title}
+              </h2>
+
+              <div
+                className="
+space-y-3
+text-sm
+"
+              >
+                <p>
+                  <span className="font-bold text-primary">Price:</span> $
+                  {product.price}
+                </p>
+
+                <p>
+                  <span className="font-bold text-primary">Stock:</span>{" "}
+                  {product.quantityInStock}
+                </p>
+
+                <p>
+                  <span className="font-bold text-primary">Sale:</span>{" "}
+                  {product.salePercentage > 0
+                    ? `${product.salePercentage}%`
+                    : "-"}
+                </p>
+
+                <p>
+                  <span className="font-bold text-primary">Category:</span>{" "}
+                  {product.category?.name || "No Category"}
+                </p>
+
+                <p>
+                  <span className="font-bold text-primary">Review:</span> ⭐{" "}
+                  {product.review}
+                </p>
+              </div>
+
+              {/* ACTIONS */}
+
+              <div
+                className="
+grid
+grid-cols-2
+gap-3
+mt-6
+"
+              >
+                <button
+                  onClick={() => {
+                    setSelectedProduct(product);
+
+                    setShowEditModal(true);
+                  }}
+                  className="
+bg-primary
+text-white
+py-2
+rounded-lg
+font-semibold
+text-sm
+"
+                >
+                  Edit
+                </button>
+
+                <button
+                  onClick={() => {
+                    setSelectedProductId(product._id);
+
+                    setShowDeleteModal(true);
+                  }}
+                  className="
+border
+border-danger
+text-danger
+py-2
+rounded-lg
+font-semibold
+text-sm
+"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
       {/* PAGINATION */}
+
       {totalPages > 1 && products.length > 0 && (
         <div
           className="
-          flex
-          justify-center
-          items-center
-          gap-3
-          mt-6
-        "
+flex
+flex-wrap
+justify-center
+items-center
+gap-2
+mt-8
+"
         >
           <button
             disabled={currentPage === 1}
             onClick={() => setCurrentPage(currentPage - 1)}
             className="
-            px-4
-            py-2
-            border
-            rounded-lg
-            disabled:opacity-50
-          "
+px-4
+py-2
+bg-white
+border
+border-secondary
+rounded-xl
+text-primary
+font-semibold
+hover:border-accent
+disabled:opacity-40
+disabled:cursor-not-allowed
+transition
+"
           >
             Previous
           </button>
@@ -340,18 +661,19 @@ font-bold
               key={index}
               onClick={() => setCurrentPage(index + 1)}
               className={`
+w-10
+h-10
+rounded-xl
+font-bold
+transition
 
-                px-4
-                py-2
-                rounded-lg
+${
+  currentPage === index + 1
+    ? "bg-primary text-white"
+    : "bg-secondary text-primary hover:bg-accent/20"
+}
 
-                ${
-                  currentPage === index + 1
-                    ? "bg-primary text-white"
-                    : "bg-secondary text-primary"
-                }
-
-              `}
+`}
             >
               {index + 1}
             </button>
@@ -361,19 +683,26 @@ font-bold
             disabled={currentPage === totalPages}
             onClick={() => setCurrentPage(currentPage + 1)}
             className="
-            px-4
-            py-2
-            border
-            rounded-lg
-            disabled:opacity-50
-          "
+px-4
+py-2
+bg-white
+border
+border-secondary
+rounded-xl
+text-primary
+font-semibold
+hover:border-accent
+disabled:opacity-40
+disabled:cursor-not-allowed
+transition
+"
           >
             Next
           </button>
         </div>
       )}
 
-      {/* CREATE MODAL */}
+      {/* CREATE PRODUCT MODAL */}
 
       <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)}>
         <CreateProduct
@@ -382,42 +711,170 @@ font-bold
         />
       </Modal>
 
-      {/* DELETE MODAL */}
+      {/* DELETE PRODUCT MODAL */}
 
       <Modal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
-        <h2 className="text-xl font-bold mb-4">Delete Product?</h2>
-
-        <p className="mb-6">Are you sure you want to delete this product?</p>
-
-        <div className="flex gap-3">
-          <button
-            onClick={() => setShowDeleteModal(false)}
+        <div>
+          <p
             className="
-              bg-secondary
-              px-4
-              py-2
-              rounded
-            "
+text-accent
+text-xs
+uppercase
+tracking-widest
+font-bold
+mb-2
+"
           >
-            Cancel
-          </button>
+            CONFIRM ACTION
+          </p>
 
-          <button
-            onClick={() => deleteProduct(selectedProductId)}
+          <h2
             className="
-              bg-danger
-              text-white
-              px-4
-              py-2
-              rounded
-            "
+text-2xl
+font-bold
+text-primary
+mb-4
+"
           >
-            Delete
-          </button>
+            Delete Product?
+          </h2>
+
+          <p
+            className="
+text-gray-500
+mb-6
+"
+          >
+            Are you sure you want to delete this product?
+          </p>
+
+          <div
+            className="
+flex
+gap-3
+"
+          >
+            <button
+              onClick={() => setShowDeleteModal(false)}
+              disabled={deleting}
+              className="
+    bg-secondary
+    text-primary
+    px-5
+    py-3
+    rounded-xl
+    font-bold
+    disabled:opacity-50
+    disabled:cursor-not-allowed
+  "
+            >
+              Cancel
+            </button>
+
+            <LoadingButton
+              onClick={() => deleteProduct(selectedProductId)}
+              loading={deleting}
+              loadingText="Deleting..."
+              className="
+    bg-danger
+    text-white
+    px-5
+    py-3
+    rounded-xl
+    font-bold
+    hover:opacity-90
+  "
+            >
+              Delete
+            </LoadingButton>
+          </div>
         </div>
       </Modal>
 
-      {/* EDIT MODAL */}
+      {/* PRODUCT DETAILS MODAL */}
+
+      <Modal
+        isOpen={showDetailsModal}
+        onClose={() => setShowDetailsModal(false)}
+      >
+        {selectedProduct && (
+          <div>
+            <p
+              className="
+text-accent
+text-xs
+uppercase
+tracking-widest
+font-bold
+mb-2
+"
+            >
+              PRODUCT DETAILS
+            </p>
+
+            <h2
+              className="
+text-2xl
+font-bold
+text-primary
+mb-5
+"
+            >
+              {selectedProduct.title}
+            </h2>
+
+            <img
+              src={selectedProduct.image}
+              alt={selectedProduct.title}
+              className="
+w-full
+h-60
+object-cover
+rounded-xl
+mb-6
+"
+            />
+
+            <div
+              className="
+space-y-3
+text-gray-600
+"
+            >
+              <p>
+                <b className="text-primary">Price:</b> ${selectedProduct.price}
+              </p>
+
+              <p>
+                <b className="text-primary">Stock:</b>{" "}
+                {selectedProduct.quantityInStock}
+              </p>
+
+              <p>
+                <b className="text-primary">Sale:</b>{" "}
+                {selectedProduct.salePercentage}%
+              </p>
+
+              <p>
+                <b className="text-primary">Category:</b>{" "}
+                {selectedProduct.category?.name || "No Category"}
+              </p>
+
+              <p>
+                <b className="text-primary">Review:</b> ⭐{" "}
+                {selectedProduct.review}
+              </p>
+
+              <p>
+                <b className="text-primary">Description:</b>{" "}
+                {selectedProduct.desc || "No description"}
+              </p>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* EDIT PRODUCT MODAL */}
 
       <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)}>
         {selectedProduct && (

@@ -1,13 +1,23 @@
 const colors = {
-  primary: "#3b2f2f",
+  primary: "#71845a",
 
-  secondary: "#eedbb6",
+  secondary: "#e5dcc8",
 
-  background: "#f5efe6",
+  background: "#fcf9ea",
 
-  danger: "#a62c00",
+  danger: "#a94442",
 
-  hover: "#bf7f67",
+  hover: "#5d7047",
+
+  accent: "#db9558",
+
+  text: "#30382c",
+
+  label: "#566149",
+
+  muted: "#7d8573",
+
+  border: "#ded8c9",
 };
 
 export default colors;

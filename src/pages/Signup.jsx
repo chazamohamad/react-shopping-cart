@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import API from "../services/api";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-
+import LoadingButton from "../components/LoadingButton";
 function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
@@ -68,26 +68,29 @@ function Signup() {
   return (
     <div
       className="
-        min-h-screen
-        bg-background
-        flex
-        items-center
-        justify-center
-        p-6
-      "
+    min-h-screen
+    bg-background
+    flex
+    items-center
+    justify-center
+    px-4
+    sm:px-6
+    py-8
+  "
     >
       <form
         onSubmit={handleSubmit}
         className="
-          bg-white
-          p-8
-          rounded-2xl
-          shadow-xl
-          border
-          border-secondary
-          w-full
-          max-w-md
-        "
+      bg-white
+      w-full
+      max-w-md
+      p-5
+      sm:p-8
+      rounded-2xl
+      shadow-xl
+      border
+      border-secondary
+    "
       >
         <h1
           className="
@@ -204,24 +207,25 @@ function Signup() {
           </button>
         </div>
 
-        <button
-          disabled={loading}
+        <LoadingButton
+          type="submit"
+          loading={loading}
+          loadingText="Creating account..."
           className="
-            w-full
-            bg-primary
-            text-secondary
-            py-3
-            rounded-lg
-            font-bold
-              cursor-pointer
-            hover:bg-secondary
-            hover:text-primary
-            transition
-            duration-300
-          "
+    w-full
+    bg-primary
+    text-white
+    py-3
+    sm:py-3.5
+    rounded-xl
+    font-bold
+    text-sm
+    sm:text-base
+    hover:bg-hover
+  "
         >
-          {loading ? "Creating..." : "Sign Up"}
-        </button>
+          Sign Up
+        </LoadingButton>
 
         <p
           className="

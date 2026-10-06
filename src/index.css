@@ -2,16 +2,38 @@
 
 body {
   margin: 0;
+  background-color: var(--color-background);
+  color: var(--color-text);
 }
 
 @theme {
-  --color-primary: #3b2f2f;
+  /* BRAND */
 
-  --color-secondary: #e8dcc4;
+  --color-primary: #71845a;
 
-  --color-background: #f5efe6;
+  --color-secondary: #e5dcc8;
 
-  --color-danger: #a62c00;
+  --color-background: #fcf9ea;
 
-  --color-hover: #bf7f67;
+  --color-hover: #5d7047;
+
+  /* ACCENT */
+
+  --color-accent: #db9558;
+
+  /* TEXT */
+
+  --color-text: #30382c;
+
+  --color-label: #566149;
+
+  --color-muted: #7d8573;
+
+  /* UI */
+
+  --color-border: #ded8c9;
+
+  /* STATUS */
+
+  --color-danger: #a94442;
 }

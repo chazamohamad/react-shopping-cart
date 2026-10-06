@@ -1,14 +1,14 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
 import API from "../services/api";
-
+import { useNavigate } from "react-router";
 import { useAuth } from "./AuthContext";
 
 const CartContext = createContext();
 
 export function CartProvider({ children }) {
   const { user } = useAuth();
-
+  const navigate = useNavigate();
   const [cart, setCart] = useState([]);
 
   const [totalPrice, setTotalPrice] = useState(0);
@@ -61,8 +61,9 @@ export function CartProvider({ children }) {
 
   // ADD PRODUCT
   const addToCart = async (product) => {
-    if (!user) return;
-
+    if (!user) {
+      navigate("/login");
+    }
     // CHECK STOCK
 
     if (product.quantityInStock <= 0) {

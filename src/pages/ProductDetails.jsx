@@ -99,15 +99,21 @@ function ProductDetails() {
       className="
         max-w-7xl
         mx-auto
-        px-6
-        py-10
+        px-4
+        sm:px-6
+        lg:px-8
+        py-6
+        sm:py-10
       "
     >
       <div
         className="
           grid
+          grid-cols-1
           md:grid-cols-2
-          gap-10
+          gap-6
+          md:gap-10
+          lg:gap-14
           items-center
         "
       >
@@ -118,12 +124,15 @@ function ProductDetails() {
             src={product.image}
             alt={product.title}
             className="
-              w-full
-              h-[450px]
-              object-cover
-              rounded-2xl
-              shadow-lg
-            "
+  w-full
+  h-72
+  sm:h-96
+  md:h-[450px]
+  object-cover
+  rounded-xl
+  sm:rounded-2xl
+  shadow-lg
+"
           />
         </div>
 
@@ -132,9 +141,12 @@ function ProductDetails() {
         <div>
           <h1
             className="
-              text-4xl
+              text-2xl
+              sm:text-3xl
+              md:text-4xl
               font-bold
-              mb-5
+              mb-4
+              sm:mb-5
               text-primary
             "
           >
@@ -143,9 +155,12 @@ function ProductDetails() {
 
           <p
             className="
-              text-gray-600
-              text-lg
-              mb-6
+              text-muted
+              text-base
+              sm:text-lg
+              md:text-xl
+              mb-5
+              sm:mb-6
             "
           >
             {product.desc}
@@ -161,7 +176,7 @@ function ProductDetails() {
           >
             <div className="text-2xl">{renderStars(product.review)}</div>
 
-            <span className="text-gray-600">({product.review})</span>
+            <span className="text-muted">({product.review})</span>
           </div>
 
           <div className="mb-8">
@@ -169,7 +184,8 @@ function ProductDetails() {
               <div>
                 <h2
                   className="
-          text-3xl
+          text-2xl
+          sm:text-3xl
           font-bold
           text-primary
         "
@@ -187,7 +203,7 @@ function ProductDetails() {
                 >
                   <span
                     className="
-            text-gray-400
+            text-muted
             line-through
             text-lg
           "
@@ -197,7 +213,7 @@ function ProductDetails() {
 
                   <span
                     className="
-            bg-danger
+            bg-accent
             text-white
             px-3
             py-1
@@ -227,7 +243,7 @@ function ProductDetails() {
             {product.quantityInStock > 0 ? (
               <p
                 className="
-text-green-600
+text-accent
 font-bold
 "
               >

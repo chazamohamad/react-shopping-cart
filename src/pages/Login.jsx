@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { Navigate } from "react-router";
 import { jwtDecode } from "jwt-decode";
-
+import LoadingButton from "../components/LoadingButton";
 import API from "../services/api";
 import { useAuth } from "./AuthContext";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -73,26 +73,29 @@ function Login() {
   return (
     <div
       className="
-        min-h-screen
-        bg-background
-        flex
-        items-center
-        justify-center
-        p-6
-      "
+    min-h-screen
+    bg-background
+    flex
+    items-center
+    justify-center
+    px-4
+    sm:px-6
+    py-8
+  "
     >
       <form
         onSubmit={handleSubmit}
         className="
-          bg-white
-          p-8
-          rounded-2xl
-          shadow-xl
-          border
-          border-secondary
-          w-full
-          max-w-md
-        "
+      bg-white
+      w-full
+      max-w-md
+      p-5
+      sm:p-8
+      rounded-2xl
+      shadow-xl
+      border
+      border-secondary
+    "
       >
         <h1
           className="
@@ -125,6 +128,7 @@ function Login() {
           name="Email"
           type="email"
           placeholder="Email"
+          disabled={loading}
           value={formData.Email}
           onChange={handleChange}
           className="
@@ -145,6 +149,7 @@ function Login() {
           <input
             name="Password"
             type={showPassword ? "text" : "password"}
+            disabled={loading}
             placeholder="Password"
             value={formData.Password}
             onChange={handleChange}
@@ -176,24 +181,25 @@ function Login() {
           </button>
         </div>
 
-        <button
-          disabled={loading}
+        <LoadingButton
+          type="submit"
+          loading={loading}
+          loadingText="Logging in..."
           className="
-            w-full
-            bg-primary
-            text-secondary
-            py-3
-            rounded-lg
-            font-bold
-              cursor-pointer
-            hover:bg-secondary
-          hover:text-primary
-            transition
-            duration-300
-          "
+    w-full
+    bg-primary
+    text-white
+    py-3
+    sm:py-3.5
+    rounded-xl
+    font-bold
+    text-sm
+    sm:text-base
+    hover:bg-hover
+  "
         >
-          {loading ? "Logging..." : "Login"}
-        </button>
+          Login
+        </LoadingButton>
 
         <p
           className="

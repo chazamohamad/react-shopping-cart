@@ -35,7 +35,7 @@ function Product({
       >
         {/* IMAGE */}
 
-        <div className="w-full h-64 bg-gray-100 flex items-center justify-center">
+        <div className="w-full h-52 sm:h-56 overflow-hidden bg-secondary/20">
           <img
             src={image}
             alt={title}
@@ -51,7 +51,8 @@ function Product({
 
         <div
           className="
-            p-6
+            p-4
+            sm:p-5
             flex
             flex-col
             flex-1
@@ -61,10 +62,11 @@ function Product({
 
           <h2
             className="
-              text-xl
+            text-lg
+              sm:text-xl
               font-bold
-              text-gray-900
-              mb-3
+              text-text
+              mb-2
               line-clamp-2
             "
           >
@@ -75,9 +77,9 @@ function Product({
 
           <p
             className="
-              text-gray-500
+              text-muted
               text-sm
-              mb-4
+              mb-3
               line-clamp-2
             "
           >
@@ -86,7 +88,7 @@ function Product({
 
           {/* REVIEW */}
 
-          <div
+          {/* <div
             className="
               flex
               items-center
@@ -97,8 +99,8 @@ function Product({
             <span className="text-yellow-500">⭐</span>
 
             <span className="text-gray-700">{review}</span>
-          </div>
-          <div
+          </div> */}
+          {/* <div
             className="
 mb-4
 "
@@ -124,7 +126,7 @@ text-sm
                 ✕ Out of Stock
               </p>
             )}
-          </div>
+          </div> */}
 
           {/* PRICE */}
 
@@ -135,7 +137,7 @@ text-sm
                   className="
             text-primary
             font-bold
-            text-2xl
+            text-xl
           "
                 >
                   ${finalPrice}
@@ -151,7 +153,7 @@ text-sm
                   <span
                     className="
               line-through
-              text-gray-400
+              text-muted
             "
                   >
                     ${price}
@@ -159,7 +161,7 @@ text-sm
 
                   <span
                     className="
-              bg-danger
+              bg-accent
               text-white
               px-2
               py-1
@@ -192,17 +194,17 @@ text-sm
 
             <button
               disabled={quantityInStock === 0}
-              className="
-                bg-primary
-                text-white
-                py-3
-                rounded-xl
-                font-semibold
-                  cursor-pointer
-                hover:bg-secondary
-                hover:text-primary
-                transition
-              "
+              className={`
+    ${
+      quantityInStock === 0
+        ? "bg-secondary text-accent cursor-not-allowed"
+        : "bg-primary text-white cursor-pointer hover:bg-secondary hover:text-primary"
+    }
+    py-3
+    rounded-xl
+    font-semibold
+    transition
+  `}
               onClick={() =>
                 addToCart({
                   id: _id,

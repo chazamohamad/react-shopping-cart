@@ -51,132 +51,244 @@ function TrackOrder() {
     }
 
     if (order.status === "ondelivery") {
-      return "🚚 On Delivery";
+      return "⛟ On Delivery";
     }
 
     return "✅ Completed";
   };
 
   return (
-    <div
+    <main
       className="
-        min-h-screen
-        bg-background
-        flex
-        justify-center
-        items-center
-        p-6
-      "
+      min-h-[calc(100vh-80px)]
+      bg-background
+      px-4
+      sm:px-6
+      py-10
+      sm:py-14
+      lg:py-20
+    "
     >
       <div
         className="
-          bg-white
-          border
-          border-secondary
-          rounded-2xl
-          shadow-xl
-          p-8
-          w-full
-          max-w-lg
-        "
+        w-full
+        max-w-xl
+        mx-auto
+      "
       >
-        <h1
-          className="
-            text-3xl
+        {/* HEADER */}
+
+        <div className="text-center mb-8">
+          <h1
+            className="
+            text-2xl
+            sm:text-3xl
+            lg:text-4xl
             font-bold
             text-primary
-            text-center
-            mb-6
+            mb-3
           "
-        >
-          Track Your Order
-        </h1>
+          >
+            Track Your Order
+          </h1>
+
+          <p
+            className="
+            text-sm
+            sm:text-base
+            text-muted
+            max-w-md
+            mx-auto
+          "
+          >
+            Enter your order number below to check the current status of your
+            order.
+          </p>
+        </div>
+
+        {/* SEARCH CARD */}
 
         <div
           className="
-            flex
-            gap-3
-          "
+          bg-white
+          border
+          border-border
+          rounded-2xl
+          shadow-md
+          p-5
+          sm:p-7
+        "
         >
-          <input
-            type="text"
-            placeholder="Enter order number"
-            value={orderNumber}
-            onChange={(e) => setOrderNumber(e.target.value)}
+          <label
+            htmlFor="orderNumber"
             className="
-              flex-1
-              border
-              border-secondary
-              rounded-lg
-              px-4
-              py-3
-              focus:outline-none
-              focus:ring-2
-              focus:ring-primary
-            "
-          />
-
-          <button
-            onClick={searchOrder}
-            className="
-              bg-primary
-              text-secondary
-              px-5
-              rounded-lg
-              font-bold
-            "
+            block
+            text-sm
+            font-semibold
+            text-label
+            mb-2
+          "
           >
-            Search
-          </button>
-        </div>
+            Order Number
+          </label>
 
-        {loading && <p className="text-center mt-6">Searching...</p>}
-
-        {error && (
-          <p
-            className="
-                text-danger
-                text-center
-                mt-6
-              "
-          >
-            {error}
-          </p>
-        )}
-
-        {order && (
           <div
             className="
-                mt-8
-                border
-                border-secondary
-                rounded-xl
-                p-5
-              "
+            flex
+            flex-col
+            sm:flex-row
+            gap-3
+          "
           >
-            <p>
-              <b>Order Number:</b> {order.orderNumber}
-            </p>
+            <input
+              id="orderNumber"
+              type="text"
+              placeholder="Enter your order number"
+              value={orderNumber}
+              onChange={(e) => setOrderNumber(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  searchOrder();
+                }
+              }}
+              className="
+              w-full
+              min-w-0
+              border
+              border-border
+              rounded-xl
+              px-4
+              py-3
+              bg-white
+              text-text
+              placeholder:text-muted
+              outline-none
+              transition
+              focus:border-primary
+              focus:ring-2
+              focus:ring-primary/20
+            "
+            />
 
+            <button
+              type="button"
+              onClick={searchOrder}
+              disabled={loading || !orderNumber.trim()}
+              className="
+              w-full
+              sm:w-auto
+              sm:min-w-28
+              bg-primary
+              text-white
+              px-6
+              py-3
+              rounded-xl
+              font-semibold
+              transition
+              hover:bg-hover
+              disabled:opacity-50
+              disabled:cursor-not-allowed
+              cursor-pointer
+            "
+            >
+              {loading ? "Searching..." : "Search"}
+            </button>
+          </div>
+
+          {/* ERROR */}
+
+          {error && (
             <div
-              className={`
-                  mt-5
-                  inline-block
+              className="
+              mt-5
+              bg-danger/10
+              border
+              border-danger/20
+              text-danger
+              rounded-xl
+              px-4
+              py-3
+              text-sm
+              font-medium
+              text-center
+            "
+            >
+              {error}
+            </div>
+          )}
+
+          {/* ORDER RESULT */}
+
+          {order && (
+            <div
+              className="
+              mt-6
+              pt-6
+              border-t
+              border-border
+            "
+            >
+              <p
+                className="
+                text-xs
+                sm:text-sm
+                font-semibold
+                uppercase
+                tracking-wide
+                text-muted
+                mb-2
+              "
+              >
+                Order Number
+              </p>
+
+              <p
+                className="
+                text-lg
+                sm:text-xl
+                font-bold
+                text-text
+                break-all
+              "
+              >
+                {order.orderNumber}
+              </p>
+
+              <div className="mt-5">
+                <p
+                  className="
+                  text-xs
+                  sm:text-sm
+                  font-semibold
+                  uppercase
+                  tracking-wide
+                  text-muted
+                  mb-2
+                "
+                >
+                  Current Status
+                </p>
+
+                <span
+                  className={`
+                  inline-flex
+                  items-center
                   px-4
                   py-2
                   rounded-full
-                  font-bold
-
+                  text-sm
+                  font-semibold
                   ${getStatusStyle()}
-
                 `}
-            >
-              {getStatusText()}
+                >
+                  {getStatusText()}
+                </span>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-    </div>
+    </main>
   );
 }
 

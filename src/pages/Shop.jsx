@@ -60,8 +60,11 @@ function Shop() {
       className="
         max-w-7xl
         mx-auto
-        px-6
+        px-4
+        sm:px-6
+        lg:px-8
         py-6
+        sm:py-8
       "
     >
       {/* TITLE */}
@@ -73,7 +76,8 @@ function Shop() {
       >
         <h1
           className="
-            text-4xl
+            text-3xl
+            sm:text-4xl
             font-bold
             text-primary
           "
@@ -151,6 +155,7 @@ function Shop() {
       grid
       grid-cols-1
       sm:grid-cols-2
+      md:grid-cols-3
       lg:grid-cols-3
       gap-10
     "

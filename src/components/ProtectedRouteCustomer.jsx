@@ -1,31 +1,10 @@
-import { Navigate, useNavigate } from "react-router";
-
+import { Navigate } from "react-router";
 import { jwtDecode } from "jwt-decode";
-
-import { useEffect } from "react";
 
 function ProtectedRouteCustomer({ children }) {
   const token = localStorage.getItem("token");
 
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!token) {
-      return;
-    }
-
-    try {
-      const decoded = jwtDecode(token);
-
-      if (decoded.role !== "customer") {
-        navigate(-1);
-      }
-    } catch (error) {
-      localStorage.removeItem("token");
-
-      navigate("/login");
-    }
-  }, [token, navigate]);
+  // No token => user not logged in
 
   if (!token) {
     return <Navigate to="/login" />;
@@ -34,16 +13,26 @@ function ProtectedRouteCustomer({ children }) {
   try {
     const decoded = jwtDecode(token);
 
+    // Token expired
+
     if (decoded.exp * 1000 < Date.now()) {
       localStorage.removeItem("token");
 
       return <Navigate to="/login" />;
+    }
+
+    // User is not customer
+
+    if (decoded.role !== "customer") {
+      return <Navigate to="/admin" />;
     }
   } catch (error) {
     localStorage.removeItem("token");
 
     return <Navigate to="/login" />;
   }
+
+  // Token exists + valid + customer
 
   return children;
 }

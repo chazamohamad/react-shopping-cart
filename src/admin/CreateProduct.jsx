@@ -1,29 +1,24 @@
 import { useEffect, useState } from "react";
 
+import LoadingButton from "../components/LoadingButton";
+
 import API from "../services/api";
 
 function CreateProduct({ closeModal, refreshProducts }) {
   const [categories, setCategories] = useState([]);
 
-  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const [error, setError] = useState("");
 
   const [formData, setFormData] = useState({
     title: "",
-
     desc: "",
-
     price: "",
-
     image: "",
-
     review: "",
-
     categoryId: "",
-
     quantityInStock: 0,
-
     salePercentage: 0,
   });
 
@@ -48,7 +43,6 @@ function CreateProduct({ closeModal, refreshProducts }) {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-
       [e.target.name]: e.target.value,
     });
   };
@@ -57,6 +51,8 @@ function CreateProduct({ closeModal, refreshProducts }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (submitting) return;
 
     setError("");
 
@@ -67,21 +63,17 @@ function CreateProduct({ closeModal, refreshProducts }) {
     }
 
     try {
-      setLoading(true);
+      setSubmitting(true);
 
       await API.post("/api/products", formData);
 
-      // refresh table data
-
       await refreshProducts();
-
-      // close popup
 
       closeModal();
     } catch (error) {
       setError(error.response?.data?.message || "Failed to create product");
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
@@ -91,6 +83,7 @@ function CreateProduct({ closeModal, refreshProducts }) {
         className="
           text-2xl
           font-bold
+          text-primary
           mb-6
         "
       >
@@ -100,9 +93,9 @@ function CreateProduct({ closeModal, refreshProducts }) {
       {error && (
         <p
           className="
-              text-red-600
-              mb-4
-            "
+            text-red-600
+            mb-4
+          "
         >
           {error}
         </p>
@@ -114,12 +107,18 @@ function CreateProduct({ closeModal, refreshProducts }) {
           placeholder="Product title"
           value={formData.title}
           onChange={handleChange}
+          disabled={submitting}
           className="
             w-full
             border
+            border-secondary
             p-3
             rounded-lg
             mb-3
+            outline-none
+            focus:ring-2
+            focus:ring-accent/30
+            disabled:opacity-60
           "
         />
 
@@ -128,12 +127,18 @@ function CreateProduct({ closeModal, refreshProducts }) {
           placeholder="Description"
           value={formData.desc}
           onChange={handleChange}
+          disabled={submitting}
           className="
             w-full
             border
+            border-secondary
             p-3
             rounded-lg
             mb-3
+            outline-none
+            focus:ring-2
+            focus:ring-accent/30
+            disabled:opacity-60
           "
         />
 
@@ -143,12 +148,18 @@ function CreateProduct({ closeModal, refreshProducts }) {
           placeholder="Price"
           value={formData.price}
           onChange={handleChange}
+          disabled={submitting}
           className="
             w-full
             border
+            border-secondary
             p-3
             rounded-lg
             mb-3
+            outline-none
+            focus:ring-2
+            focus:ring-accent/30
+            disabled:opacity-60
           "
         />
 
@@ -157,12 +168,18 @@ function CreateProduct({ closeModal, refreshProducts }) {
           placeholder="Image URL"
           value={formData.image}
           onChange={handleChange}
+          disabled={submitting}
           className="
             w-full
             border
+            border-secondary
             p-3
             rounded-lg
             mb-3
+            outline-none
+            focus:ring-2
+            focus:ring-accent/30
+            disabled:opacity-60
           "
         />
 
@@ -175,12 +192,18 @@ function CreateProduct({ closeModal, refreshProducts }) {
           placeholder="Review"
           value={formData.review}
           onChange={handleChange}
+          disabled={submitting}
           className="
             w-full
             border
+            border-secondary
             p-3
             rounded-lg
             mb-3
+            outline-none
+            focus:ring-2
+            focus:ring-accent/30
+            disabled:opacity-60
           "
         />
 
@@ -188,12 +211,18 @@ function CreateProduct({ closeModal, refreshProducts }) {
           name="categoryId"
           value={formData.categoryId}
           onChange={handleChange}
+          disabled={submitting}
           className="
             w-full
             border
+            border-secondary
             p-3
             rounded-lg
             mb-5
+            outline-none
+            focus:ring-2
+            focus:ring-accent/30
+            disabled:opacity-60
           "
         >
           <option value="">Select Category</option>
@@ -211,13 +240,19 @@ function CreateProduct({ closeModal, refreshProducts }) {
           placeholder="Quantity In Stock"
           value={formData.quantityInStock}
           onChange={handleChange}
+          disabled={submitting}
           className="
-w-full
-border
-p-3
-mb-3
-rounded-lg
-"
+            w-full
+            border
+            border-secondary
+            p-3
+            mb-3
+            rounded-lg
+            outline-none
+            focus:ring-2
+            focus:ring-accent/30
+            disabled:opacity-60
+          "
         />
 
         <input
@@ -226,13 +261,19 @@ rounded-lg
           placeholder="Sale Percentage %"
           value={formData.salePercentage}
           onChange={handleChange}
+          disabled={submitting}
           className="
-w-full
-border
-p-3
-mb-5
-rounded-lg
-"
+            w-full
+            border
+            border-secondary
+            p-3
+            mb-5
+            rounded-lg
+            outline-none
+            focus:ring-2
+            focus:ring-accent/30
+            disabled:opacity-60
+          "
         />
 
         <div
@@ -241,29 +282,37 @@ rounded-lg
             gap-3
           "
         >
-          <button
+          <LoadingButton
             type="submit"
-            disabled={loading}
+            loading={submitting}
+            loadingText="Creating..."
             className="
+              flex-1
               bg-primary
               text-white
-              px-5
-              py-2
-              rounded-lg
+              px-6
+              py-3
+              rounded-xl
+              font-bold
+              hover:bg-hover
             "
           >
-            {loading ? "Creating..." : "Create"}
-          </button>
+            Create Product
+          </LoadingButton>
 
           <button
             type="button"
             onClick={closeModal}
+            disabled={submitting}
             className="
               bg-danger
               text-white
               px-5
-              py-2
-              rounded-lg
+              py-3
+              rounded-xl
+              font-bold
+              disabled:opacity-50
+              disabled:cursor-not-allowed
             "
           >
             Cancel

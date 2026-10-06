@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import LoadingButton from "../components/LoadingButton";
 import API from "../services/api";
 
 function CreateUser({ closeModal, refreshUsers }) {
@@ -84,6 +84,7 @@ function CreateUser({ closeModal, refreshUsers }) {
         <input
           type="text"
           name="FullName"
+          disabled={loading}
           placeholder="Full Name"
           value={formData.FullName}
           onChange={handleChange}
@@ -101,6 +102,7 @@ function CreateUser({ closeModal, refreshUsers }) {
         <input
           type="email"
           name="Email"
+          disabled={loading}
           placeholder="Email"
           value={formData.Email}
           onChange={handleChange}
@@ -118,6 +120,7 @@ function CreateUser({ closeModal, refreshUsers }) {
         <input
           type="password"
           name="Password"
+          disabled={loading}
           placeholder="Password"
           value={formData.Password}
           onChange={handleChange}
@@ -135,6 +138,7 @@ function CreateUser({ closeModal, refreshUsers }) {
         <select
           name="Role"
           value={formData.Role}
+          disabled={loading}
           onChange={handleChange}
           className="
             w-full
@@ -155,33 +159,43 @@ function CreateUser({ closeModal, refreshUsers }) {
             gap-3
           "
         >
-          <button
-            type="submit"
-            disabled={loading}
-            className="
-              bg-primary
-              text-white
-              px-5
-              py-2
-              rounded-lg
-            "
-          >
-            {loading ? "Creating..." : "Create"}
-          </button>
+          <div className="flex gap-3">
+            <LoadingButton
+              type="submit"
+              loading={loading}
+              loadingText="Creating..."
+              className="
+      flex-1
+      bg-primary
+      text-white
+      px-5
+      py-3
+      rounded-xl
+      font-bold
+      hover:bg-hover
+    "
+            >
+              Create User
+            </LoadingButton>
 
-          <button
-            type="button"
-            onClick={closeModal}
-            className="
-              bg-danger
-              text-white
-              px-5
-              py-2
-              rounded-lg
-            "
-          >
-            Cancel
-          </button>
+            <button
+              type="button"
+              onClick={closeModal}
+              disabled={loading}
+              className="
+      bg-danger
+      text-white
+      px-5
+      py-3
+      rounded-xl
+      font-bold
+      disabled:opacity-50
+      disabled:cursor-not-allowed
+    "
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       </form>
     </div>

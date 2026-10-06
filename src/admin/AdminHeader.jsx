@@ -1,14 +1,32 @@
 import { Link, useNavigate } from "react-router";
 
 import { useAuth } from "../pages/AuthContext";
-import { useState } from "react";
-import { FaUserCircle } from "react-icons/fa";
 
-function AdminHeader() {
+import { useState, useRef, useEffect } from "react";
+
+import { FaUserCircle, FaBars, FaChevronDown } from "react-icons/fa";
+
+function AdminHeader({ setOpenSidebar }) {
   const navigate = useNavigate();
 
   const { user, logout } = useAuth();
   const [openProfile, setOpenProfile] = useState(false);
+
+  const profileRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setOpenProfile(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleLogout = () => {
     // Only logout user
@@ -22,116 +40,173 @@ function AdminHeader() {
   return (
     <header
       className="
-      bg-secondary
-        shadow
-        px-6
-        py-4
-        flex
-        justify-between
-        items-center
-      "
+h-20
+bg-white
+border-b
+border-accent
+shadow-sm
+px-4
+md:px-6
+flex
+items-center
+justify-between
+"
     >
-      <h2
-        className="
-          text-xl
-          font-bold
-        "
-      >
-        Dashboard
-      </h2>
+      {/* LEFT */}
 
       <div
         className="
-          flex
-          items-center
-          gap-4
-        "
+flex
+items-center
+gap-4
+"
       >
-        {/* USER INFO */}
+        <button
+          onClick={() => setOpenSidebar(true)}
+          className="
+md:hidden
+text-primary
+text-xl
+"
+        >
+          <FaBars />
+        </button>
 
+        <div>
+          <h2
+            className="
+text-xl
+md:text-2xl
+font-bold
+text-primary
+"
+          >
+            Dashboard
+          </h2>
+        </div>
+      </div>
+
+      {/* RIGHT */}
+
+      <div
+        className="
+flex
+items-center
+gap-3
+"
+      >
         <div
           className="
-            text-right
-          "
+hidden
+sm:block
+text-right
+"
         >
           <p
             className="
-              font-bold
-            "
+font-bold
+text-primary
+"
           >
             {user?.FullName}
           </p>
 
           <p
             className="
-              text-sm
-              text-gray-500
-            "
+text-xs
+text-gray-500
+"
           >
             {user?.Role}
           </p>
         </div>
 
-        {/* PROFILE */}
-
         <div
+          ref={profileRef}
           className="
-    relative
-  "
+relative
+"
         >
-          {/* PROFILE ICON */}
-
           <button
             onClick={() => setOpenProfile(!openProfile)}
             className="
-      text-primary
-      hover:text-hover
-      transition
-    "
+flex
+items-center
+gap-2
+text-primary
+"
           >
             <FaUserCircle
               className="
-        text-4xl
-      "
+text-4xl
+"
+            />
+
+            <FaChevronDown
+              className="
+hidden
+sm:block
+text-sm
+"
             />
           </button>
-
-          {/* DROPDOWN */}
 
           {openProfile && (
             <div
               className="
-          absolute
-          right-0
-          mt-3
-          w-40
-          bg-white
-          rounded-xl
-          shadow-lg
-          border
-          border-secondary
-          overflow-hidden
-          z-50
-        "
+absolute
+right-0
+top-12
+w-52
+bg-white
+rounded-xl
+shadow-xl
+border
+border-secondary
+overflow-hidden
+z-50
+"
             >
-              {/* PROFILE */}
+              <div
+                className="
+px-4
+py-3
+border-b
+border-secondary
+"
+              >
+                <p
+                  className="
+font-bold
+text-primary
+"
+                >
+                  {user?.FullName}
+                </p>
+
+                <p
+                  className="
+text-sm
+text-gray-500
+"
+                >
+                  {user?.Email}
+                </p>
+              </div>
 
               <Link
                 to="/admin/profile"
                 onClick={() => setOpenProfile(false)}
                 className="
-            block
-            px-4
-            py-3
-            text-primary
-            hover:bg-secondary
-            transition
-          "
+block
+px-4
+py-3
+text-primary
+hover:bg-secondary
+"
               >
                 Profile
               </Link>
-
-              {/* LOGOUT */}
 
               <button
                 onClick={() => {
@@ -140,14 +215,13 @@ function AdminHeader() {
                   navigate("/login");
                 }}
                 className="
-            w-full
-            text-left
-            px-4
-            py-3
-            text-danger
-            hover:bg-red-50
-            transition
-          "
+w-full
+text-left
+px-4
+py-3
+text-danger
+hover:bg-red-50
+"
               >
                 Logout
               </button>

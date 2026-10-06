@@ -1,16 +1,45 @@
 import { NavLink } from "react-router";
 
-function AdminSidebar() {
+function AdminSidebar({ openSidebar, setOpenSidebar }) {
   return (
     <aside
-      className="
-        w-64
-       bg-primary
-        text-white
-        min-h-screen
-        p-5
-      "
+      className={`
+fixed
+top-0
+left-0
+z-50
+
+h-screen
+w-64
+
+bg-primary
+text-white
+p-5
+
+transform
+transition-transform
+duration-300
+
+md:static
+md:translate-x-0
+
+${openSidebar ? "translate-x-0" : "-translate-x-full"}
+`}
     >
+      <button
+        onClick={() => setOpenSidebar(false)}
+        className="
+    md:hidden
+    absolute
+    top-5
+    right-5
+    text-secondary
+    text-2xl
+  "
+      >
+        ✕
+      </button>
+
       <h1
         className="
           text-2xl
@@ -21,10 +50,11 @@ function AdminSidebar() {
         Admin Panel
       </h1>
 
-      <nav className="space-y-4">
+      <nav className="space-y-4 text-lg">
         <NavLink
           to="/admin"
           end
+          onClick={() => setOpenSidebar(false)}
           className={({ isActive }) =>
             isActive
               ? "block bg-[#E8DCC4] text-primary rounded-lg px-4 py-2 font-bold"
@@ -36,6 +66,7 @@ function AdminSidebar() {
 
         <NavLink
           to="/admin/users"
+          onClick={() => setOpenSidebar(false)}
           className={({ isActive }) =>
             isActive
               ? "block bg-secondary text-primary rounded-lg px-4 py-2 font-bold"
@@ -47,6 +78,7 @@ function AdminSidebar() {
 
         <NavLink
           to="/admin/products"
+          onClick={() => setOpenSidebar(false)}
           className={({ isActive }) =>
             isActive
               ? "block bg-secondary text-primary rounded-lg px-4 py-2 font-bold"
@@ -58,6 +90,7 @@ function AdminSidebar() {
 
         <NavLink
           to="/admin/categories"
+          onClick={() => setOpenSidebar(false)}
           className={({ isActive }) =>
             isActive
               ? "block bg-secondary text-primary rounded-lg px-4 py-2 font-bold"
@@ -69,6 +102,7 @@ function AdminSidebar() {
 
         <NavLink
           to="/admin/orders"
+          onClick={() => setOpenSidebar(false)}
           className={({ isActive }) =>
             isActive
               ? "block bg-secondary text-primary rounded-lg px-4 py-2 font-bold"

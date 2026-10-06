@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import LoadingButton from "../components/LoadingButton";
 import API from "../services/api";
 
 function EditUser({ user, closeModal, refreshUsers }) {
@@ -80,6 +80,7 @@ function EditUser({ user, closeModal, refreshUsers }) {
         <input
           type="text"
           name="FullName"
+          disabled={loading}
           value={formData.FullName}
           onChange={handleChange}
           placeholder="Full Name"
@@ -97,6 +98,7 @@ function EditUser({ user, closeModal, refreshUsers }) {
         <input
           type="email"
           name="Email"
+          disabled={loading}
           value={formData.Email}
           onChange={handleChange}
           placeholder="Email"
@@ -113,6 +115,7 @@ function EditUser({ user, closeModal, refreshUsers }) {
 
         <select
           name="Role"
+          disabled={loading}
           value={formData.Role}
           onChange={handleChange}
           className="
@@ -134,30 +137,37 @@ function EditUser({ user, closeModal, refreshUsers }) {
             gap-3
           "
         >
-          <button
+          <LoadingButton
             type="submit"
-            disabled={loading}
+            loading={loading}
+            loadingText="Updating..."
             className="
-              bg-primary
-              text-white
-              px-5
-              py-2
-              rounded-lg
-            "
+    flex-1
+    bg-primary
+    text-white
+    px-5
+    py-3
+    rounded-xl
+    font-bold
+    hover:bg-hover
+  "
           >
-            {loading ? "Updating..." : "Update"}
-          </button>
-
+            Update User
+          </LoadingButton>
           <button
             type="button"
             onClick={closeModal}
+            disabled={loading}
             className="
-              bg-danger
-              text-white
-              px-5
-              py-2
-              rounded-lg
-            "
+    bg-danger
+    text-white
+    px-5
+    py-3
+    rounded-xl
+    font-bold
+    disabled:opacity-50
+    disabled:cursor-not-allowed
+  "
           >
             Cancel
           </button>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import LoadingButton from "../components/LoadingButton";
 import API from "../services/api";
 
 function EditProduct({ product, closeModal, refreshProducts }) {
@@ -209,29 +209,37 @@ rounded-lg
         />
 
         <div className="flex gap-3">
-          <button
-            disabled={loading}
+          <LoadingButton
+            type="submit"
+            loading={loading}
+            loadingText="Updating..."
             className="
-              bg-primary
-              text-white
-              px-5
-              py-2
-              rounded-lg
-            "
+    flex-1
+    bg-primary
+    text-white
+    px-5
+    py-3
+    rounded-xl
+    font-bold
+    hover:bg-hover
+  "
           >
-            {loading ? "Updating..." : "Update"}
-          </button>
-
+            Update Product
+          </LoadingButton>
           <button
             type="button"
             onClick={closeModal}
+            disabled={loading}
             className="
-              bg-danger
-              text-white
-              px-5
-              py-2
-              rounded-lg
-            "
+    bg-danger
+    text-white
+    px-5
+    py-3
+    rounded-xl
+    font-bold
+    disabled:opacity-50
+    disabled:cursor-not-allowed
+  "
           >
             Cancel
           </button>
