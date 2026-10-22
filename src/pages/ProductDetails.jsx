@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
-import axios from "axios";
-
+// import axios from "axios";
+import API from "../services/api.js";
 import { useCart } from "./CartContext.jsx";
 
 function ProductDetails() {
@@ -18,9 +18,10 @@ function ProductDetails() {
   useEffect(() => {
     async function getProductDetails() {
       try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/products/${id}`,
-        );
+        const response = await API.get(`/api/products/${id}`);
+        // axios.get(
+        //   `${import.meta.env.VITE_API_URL}/api/products/${id}`,
+        // );
 
         setProduct(response.data);
       } catch (error) {
@@ -39,7 +40,7 @@ function ProductDetails() {
         className="
         text-center
         mt-10
-        text-gray-500
+        text-muted
       "
       >
         Loading product details...
@@ -53,7 +54,7 @@ function ProductDetails() {
         className="
         text-center
         mt-10
-        text-red-600
+        text-danger
       "
       >
         {error}
@@ -252,7 +253,7 @@ font-bold
             ) : (
               <p
                 className="
-text-red-600
+text-accent
 font-bold
 "
               >
@@ -283,7 +284,9 @@ font-bold
     cursor-pointer
     hover:text-primary
     transition
-    disabled:bg-gray-400
+    disabled:bg-secondary
+    disabled:font-bold
+    disabled:text-accent
     disabled:cursor-not-allowed
   "
               onClick={() =>

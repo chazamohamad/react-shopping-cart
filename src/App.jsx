@@ -45,6 +45,10 @@ function App() {
 
         <Route path="/product-details/:id" element={<ProductDetails />} />
 
+        <Route path="/checkout" element={<Checkout />} />
+
+        <Route path="/order-success" element={<OrderSuccess />} />
+
         <Route
           path="/track-order"
           element={
@@ -97,8 +101,6 @@ function App() {
 
         <Route path="profile" element={<AdminProfile />} />
       </Route>
-      <Route path="/checkout" element={<Checkout />} />
-      <Route path="/order-success" element={<OrderSuccess />} />
     </Routes>
   );
 }

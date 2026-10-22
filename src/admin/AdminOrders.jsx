@@ -472,7 +472,7 @@ function AdminOrders() {
                   className="
                     text-center
                     py-12
-                    text-gray-500
+                    text-danger
                     font-bold
                   "
                 >
@@ -1036,7 +1036,7 @@ function AdminOrders() {
         </div>
       )}
 
-      {/* ORDER DETAILS */}
+      {/* ORDER DETAILS MODAL */}
 
       <OrderDetailsModal
         order={selectedOrder}

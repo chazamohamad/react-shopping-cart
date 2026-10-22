@@ -24,6 +24,7 @@ function Login() {
 
   if (user && user.role !== "admin") {
     return <Navigate to="/shop" />;
+    // navigate("/shop");
   }
 
   const handleChange = (e) => {

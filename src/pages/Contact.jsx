@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import { Link } from "react-router";
 function Contact() {
   const [formData, setFormData] = useState({
     name: "",
@@ -166,8 +166,8 @@ function Contact() {
                   Email
                 </p>
 
-                <a
-                  href="mailto:support@yourstore.com"
+                <Link
+                  to="mailto:support@yourstore.com"
                   className="
                     text-white
                     font-medium
@@ -176,7 +176,7 @@ function Contact() {
                   "
                 >
                   support@TopHome.com
-                </a>
+                </Link>
               </div>
 
               {/* PHONE */}
@@ -195,8 +195,8 @@ function Contact() {
                   Phone
                 </p>
 
-                <a
-                  href="tel:+96100000000"
+                <Link
+                  to="tel:+96100000000"
                   className="
                     text-white
                     font-medium
@@ -204,7 +204,7 @@ function Contact() {
                   "
                 >
                   +961 70 462 560
-                </a>
+                </Link>
               </div>
 
               {/* LOCATION */}

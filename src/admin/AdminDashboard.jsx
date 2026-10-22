@@ -225,7 +225,7 @@ text-primary
 
           <p
             className="
-text-gray-500
+text-muted
 mt-2
 "
           >
@@ -315,7 +315,7 @@ font-medium
               ${
                 selectedYear === year
                   ? "bg-secondary text-primary font-bold"
-                  : "text-gray-600 hover:bg-accent/10 hover:text-primary"
+                  : "text-muted hover:bg-accent/10 hover:text-primary"
               }
 
             `}
@@ -366,7 +366,7 @@ items-start
                 <p
                   className="
 text-sm
-text-gray-500
+text-muted
 font-medium
 "
                 >

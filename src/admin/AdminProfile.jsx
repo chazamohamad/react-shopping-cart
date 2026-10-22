@@ -22,6 +22,7 @@ min-h-full
 bg-background
 p-4
 md:p-8
+
 "
     >
       {/* HEADER */}
@@ -52,7 +53,7 @@ text-primary
 
         <p
           className="
-text-gray-500
+text-muted
 mt-2
 "
         >
@@ -127,7 +128,7 @@ text-primary
 
             <p
               className="
-text-gray-500
+text-muted
 mt-2
 "
             >
@@ -202,7 +203,7 @@ text-accent
                 <p
                   className="
 text-sm
-text-gray-500
+text-muted
 "
                 >
                   Full Name
@@ -244,7 +245,7 @@ text-accent
                 <p
                   className="
 text-sm
-text-gray-500
+text-muted
 "
                 >
                   Email
@@ -288,7 +289,7 @@ text-accent
                 <p
                   className="
 text-sm
-text-gray-500
+text-muted
 "
                 >
                   Account Role
@@ -343,7 +344,7 @@ text-primary
             <p
               className="
 text-sm
-text-gray-500
+text-muted
 "
             >
               Your administrator account is currently active

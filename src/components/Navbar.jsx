@@ -16,17 +16,16 @@ function Navbar() {
   const navigate = useNavigate();
 
   const userMenuRef = useRef(null);
+  const mobileUserMenuRef = useRef(null);
 
   const { user, logout } = useAuth();
-
   const { totalItems } = useCart();
 
   const [openUserMenu, setOpenUserMenu] = useState(false);
-
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
+  const [openMobileUserMenu, setOpenMobileUserMenu] = useState(false);
 
-  // CLOSE USER MENU WHEN CLICKING OUTSIDE
-
+  // CLOSE DESKTOP USER MENU WHEN CLICKING OUTSIDE
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
@@ -41,12 +40,29 @@ function Navbar() {
     };
   }, []);
 
-  // LOGOUT
+  // CLOSE MOBILE USER MENU WHEN CLICKING OUTSIDE
+  useEffect(() => {
+    const handleClickOutsideMobileUser = (event) => {
+      if (
+        mobileUserMenuRef.current &&
+        !mobileUserMenuRef.current.contains(event.target)
+      ) {
+        setOpenMobileUserMenu(false);
+      }
+    };
 
+    document.addEventListener("mousedown", handleClickOutsideMobileUser);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutsideMobileUser);
+    };
+  }, []);
+
+  // LOGOUT
   const handleLogout = () => {
     setOpenUserMenu(false);
-
     setOpenMobileMenu(false);
+    setOpenMobileUserMenu(false);
 
     logout();
 
@@ -54,28 +70,26 @@ function Navbar() {
   };
 
   // CLOSE MOBILE MENU
-
   const closeMobileMenu = () => {
     setOpenMobileMenu(false);
+    setOpenMobileUserMenu(false);
   };
 
   // NAV LINK STYLE
-
-  const navLinkClass = ({ isActive }) =>
-    `
-      px-3
-      py-2
-      rounded-lg
-      text-md
-      font-medium
-      transition
-      duration-200
-      ${
-        isActive
-          ? "bg-secondary text-primary font-bold"
-          : "text-white/90 hover:text-secondary hover:bg-white/10"
-      }
-    `;
+  const navLinkClass = ({ isActive }) => `
+    px-3
+    py-2
+    rounded-lg
+    text-md
+    font-medium
+    transition
+    duration-200
+    ${
+      isActive
+        ? "bg-secondary text-primary font-bold"
+        : "text-white/90 hover:text-secondary hover:bg-white/10"
+    }
+  `;
 
   return (
     <nav
@@ -92,10 +106,10 @@ function Navbar() {
     >
       <div
         className="
-        mx-10
-          px-4
-          sm:px-6
-          lg:px-8
+          mx-6
+          px-2
+          sm:px-4
+          lg:px-6
           h-20
           flex
           items-center
@@ -108,36 +122,36 @@ function Navbar() {
             to="/shop"
             onClick={closeMobileMenu}
             className="
-            flex
-            items-center
-            gap-2
-            shrink-0
-          "
+              flex
+              items-center
+              gap-2
+              shrink-0
+            "
           >
             <span
               className="
-              w-2
-              h-2
-              rounded-full
-              bg-secondary
-            "
+                w-2
+                h-2
+                rounded-full
+                bg-secondary
+              "
             />
 
             <span
               className="
-              text-secondary
-              text-xl
-              sm:text-2xl
-              font-bold
-              tracking-tight
-            "
+                text-secondary
+                text-xl
+                sm:text-2xl
+                font-bold
+                tracking-tight
+              "
             >
               TOP HOME
             </span>
           </NavLink>
         </div>
-        {/* DESKTOP NAVIGATION */}
 
+        {/* DESKTOP NAVIGATION */}
         <div
           className="
             hidden
@@ -168,6 +182,8 @@ function Navbar() {
             </NavLink>
           )}
         </div>
+
+        {/* DESKTOP ACTIONS */}
         <div
           className="
             hidden
@@ -177,7 +193,6 @@ function Navbar() {
           "
         >
           {/* CART */}
-
           {user && (
             <NavLink
               to="/cart"
@@ -218,7 +233,7 @@ function Navbar() {
                     justify-center
                     font-bold
                     border-2
-                    border-primary
+                    border-secondary
                   "
                 >
                   {totalItems}
@@ -227,8 +242,7 @@ function Navbar() {
             </NavLink>
           )}
 
-          {/* USER MENU */}
-
+          {/* DESKTOP USER MENU */}
           {user ? (
             <div
               ref={userMenuRef}
@@ -239,7 +253,7 @@ function Navbar() {
             >
               <button
                 type="button"
-                onClick={() => setOpenUserMenu(!openUserMenu)}
+                onClick={() => setOpenUserMenu((prev) => !prev)}
                 aria-expanded={openUserMenu}
                 className="
                   flex
@@ -292,8 +306,7 @@ function Navbar() {
                 </div>
               </button>
 
-              {/* USER DROPDOWN */}
-
+              {/* DESKTOP USER DROPDOWN */}
               {openUserMenu && (
                 <div
                   className="
@@ -311,8 +324,6 @@ function Navbar() {
                     z-50
                   "
                 >
-                  {/* USER INFO */}
-
                   <div
                     className="
                       px-4
@@ -340,11 +351,9 @@ function Navbar() {
                         truncate
                       "
                     >
-                      {user.email}
+                      {user.email || user.Email}
                     </p>
                   </div>
-
-                  {/* LOGOUT */}
 
                   <button
                     type="button"
@@ -364,7 +373,6 @@ function Navbar() {
                     "
                   >
                     <FaSignOutAlt />
-
                     <span>Logout</span>
                   </button>
                 </div>
@@ -373,58 +381,224 @@ function Navbar() {
           ) : (
             <NavLink
               to="/login"
-              className=" 
-      px-3
-      py-2
-      rounded-lg
-      text-md
-      font-medium
-      transition
-      duration-200
-     bg-secondary
-     text-accent
-     font-bold
-     hover:bg-accent
-    hover:text-secondary
-     
-    
-       "
+              className="
+                px-3
+                py-2
+                rounded-lg
+                text-md
+                font-medium
+                transition
+                duration-200
+                bg-secondary
+                text-accent
+                font-bold
+                hover:bg-accent
+                hover:text-secondary
+              "
             >
               Login
             </NavLink>
           )}
         </div>
 
-        {/* MOBILE BUTTON */}
-
-        <button
-          type="button"
-          onClick={() => setOpenMobileMenu(!openMobileMenu)}
-          aria-label="Toggle navigation menu"
-          aria-expanded={openMobileMenu}
+        {/* MOBILE ACTIONS */}
+        <div
           className="
             lg:hidden
-            w-10
-            h-10
             flex
             items-center
-            justify-center
-            rounded-lg
-            text-secondary
-            hover:bg-white/10
-            transition
+            gap-2
           "
         >
-          {openMobileMenu ? (
-            <FaTimes className="text-xl" />
-          ) : (
-            <FaBars className="text-xl" />
+          {/* MOBILE CART */}
+          {user && (
+            <NavLink
+              to="/cart"
+              aria-label="Shopping Cart"
+              onClick={() => {
+                setOpenMobileMenu(false);
+                setOpenMobileUserMenu(false);
+              }}
+              className="
+                relative
+                w-10
+                h-10
+                flex
+                items-center
+                justify-center
+                rounded-lg
+                text-secondary
+                hover:bg-white/10
+                hover:text-white
+                transition
+                duration-200
+              "
+            >
+              <FaShoppingCart className="text-xl" />
+
+              {totalItems > 0 && (
+                <span
+                  className="
+                    absolute
+                    -top-1
+                    -right-1
+                    min-w-5
+                    h-5
+                    px-1
+                    flex
+                    items-center
+                    justify-center
+                    bg-danger
+                    text-white
+                    text-[10px]
+                    leading-none
+                    rounded-full
+                    font-bold
+                    border-2
+                    border-secondary
+                  "
+                >
+                  {totalItems}
+                </span>
+              )}
+            </NavLink>
           )}
-        </button>
+
+          {/* MOBILE PROFILE */}
+          {user && (
+            <div ref={mobileUserMenuRef} className="relative">
+              <button
+                type="button"
+                aria-label="User Profile"
+                aria-expanded={openMobileUserMenu}
+                onClick={() => {
+                  setOpenMobileUserMenu((prev) => !prev);
+                  setOpenMobileMenu(false);
+                }}
+                className="
+                  w-10
+                  h-10
+                  flex
+                  items-center
+                  justify-center
+                  rounded-lg
+                  text-secondary
+                  hover:bg-white/10
+                  hover:text-white
+                  transition
+                  duration-200
+                "
+              >
+                <FaUserCircle className="text-2xl" />
+              </button>
+
+              {/* MOBILE PROFILE DROPDOWN */}
+              {openMobileUserMenu && (
+                <div
+                  className="
+                    absolute
+                    right-0
+                    top-full
+                    mt-2
+                    w-56
+                    bg-white
+                    border
+                    border-border
+                    rounded-xl
+                    shadow-xl
+                    overflow-hidden
+                    z-50
+                  "
+                >
+                  <div
+                    className="
+                      px-4
+                      py-4
+                      border-b
+                      border-border
+                    "
+                  >
+                    <p
+                      className="
+                        text-sm
+                        font-bold
+                        text-text
+                        truncate
+                      "
+                    >
+                      {user.FullName}
+                    </p>
+
+                    <p
+                      className="
+                        text-xs
+                        text-muted
+                        mt-1
+                        truncate
+                      "
+                    >
+                      {user.email || user.Email}
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="
+                      w-full
+                      flex
+                      items-center
+                      gap-3
+                      px-4
+                      py-3
+                      text-danger
+                      text-sm
+                      font-medium
+                      hover:bg-red-50
+                      transition
+                    "
+                  >
+                    <FaSignOutAlt />
+                    <span>Logout</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* MOBILE HAMBURGER */}
+          <button
+            type="button"
+            aria-label="Toggle navigation menu"
+            aria-expanded={openMobileMenu}
+            onClick={() => {
+              setOpenMobileMenu((prev) => !prev);
+              setOpenMobileUserMenu(false);
+            }}
+            className="
+              w-10
+              h-10
+              flex
+              items-center
+              justify-center
+              rounded-lg
+              text-secondary
+              hover:bg-white/10
+              hover:text-white
+              transition
+              duration-200
+            "
+          >
+            {openMobileMenu ? (
+              <FaTimes className="text-xl" />
+            ) : (
+              <FaBars className="text-xl" />
+            )}
+          </button>
+        </div>
       </div>
 
       {/* MOBILE MENU */}
-
       {openMobileMenu && (
         <div
           className="
@@ -441,6 +615,10 @@ function Navbar() {
               px-4
               py-4
               space-y-2
+              flex
+              flex-col
+              items-center
+              justify-center
             "
           >
             <NavLink
@@ -475,7 +653,7 @@ function Navbar() {
               Track Order
             </NavLink>
 
-            {user && (
+            {user ? (
               <>
                 <NavLink
                   to="/my-orders"
@@ -485,41 +663,13 @@ function Navbar() {
                   My Orders
                 </NavLink>
 
-                <NavLink
-                  to="/cart"
-                  onClick={closeMobileMenu}
-                  className={navLinkClass}
-                >
-                  <span className="flex items-center gap-2">
-                    <FaShoppingCart />
-
-                    <span>Cart</span>
-
-                    {totalItems > 0 && (
-                      <span
-                        className="
-                          bg-danger
-                          text-white
-                          text-[10px]
-                          px-2
-                          py-0.5
-                          rounded-full
-                          font-bold
-                        "
-                      >
-                        {totalItems}
-                      </span>
-                    )}
-                  </span>
-                </NavLink>
-
                 <button
                   type="button"
                   onClick={handleLogout}
                   className="
-                    w-full
                     flex
                     items-center
+                    justify-center
                     gap-2
                     px-3
                     py-2
@@ -528,17 +678,13 @@ function Navbar() {
                     font-medium
                     hover:bg-white/10
                     transition
-                    text-left
                   "
                 >
                   <FaSignOutAlt />
-
                   <span>Logout</span>
                 </button>
               </>
-            )}
-
-            {!user && (
+            ) : (
               <>
                 <NavLink
                   to="/login"

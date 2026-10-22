@@ -114,10 +114,10 @@ text-primary
           <p
             className="
 text-xs
-text-gray-500
+text-muted
 "
           >
-            {user?.Role}
+            {user?.role}
           </p>
         </div>
 
@@ -187,10 +187,10 @@ text-primary
                 <p
                   className="
 text-sm
-text-gray-500
+text-muted
 "
                 >
-                  {user?.Email}
+                  {user?.email}
                 </p>
               </div>
 
@@ -210,9 +210,7 @@ hover:bg-secondary
 
               <button
                 onClick={() => {
-                  logout();
-
-                  navigate("/login");
+                  handleLogout();
                 }}
                 className="
 w-full
