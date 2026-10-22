@@ -176,7 +176,7 @@ function Navbar() {
             Track Order
           </NavLink>
 
-          {user && (
+          {user && user.role != "admin" && (
             <NavLink to="/my-orders" className={navLinkClass}>
               My Orders
             </NavLink>
@@ -193,7 +193,7 @@ function Navbar() {
           "
         >
           {/* CART */}
-          {user && (
+          {user && user.role != "admin" && (
             <NavLink
               to="/cart"
               aria-label="Shopping Cart"
@@ -411,7 +411,7 @@ function Navbar() {
           "
         >
           {/* MOBILE CART */}
-          {user && (
+          {user && user.role != "admin" && (
             <NavLink
               to="/cart"
               aria-label="Shopping Cart"
@@ -653,7 +653,7 @@ function Navbar() {
               Track Order
             </NavLink>
 
-            {user ? (
+            {user && user.role != "admin" ? (
               <>
                 <NavLink
                   to="/my-orders"
