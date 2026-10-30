@@ -8,6 +8,7 @@ import LoadingButton from "../components/LoadingButton";
 import CreateUser from "./CreateUser";
 import EditUser from "./EditUser";
 import TableSkeleton from "../components/TableSkeleton";
+import CardSkeleton from "../components/CardSkeleton";
 
 function AdminUsers() {
   const [users, setUsers] = useState([]);
@@ -78,7 +79,17 @@ function AdminUsers() {
   };
 
   if (loading) {
-    return <TableSkeleton rows={5} columns={4} />;
+    return (
+      <>
+        {/* MOBILE */}
+        <CardSkeleton cards={3} />
+
+        {/* DESKTOP */}
+        <div className="hidden md:block">
+          <TableSkeleton rows={6} columns={6} />
+        </div>
+      </>
+    );
   }
 
   return (

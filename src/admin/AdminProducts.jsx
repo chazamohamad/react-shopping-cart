@@ -12,6 +12,8 @@ import TableSkeleton from "../components/TableSkeleton";
 
 import LoadingButton from "../components/LoadingButton";
 
+import CardSkeleton from "../components/CardSkeleton";
+
 function AdminProducts() {
   const [products, setProducts] = useState([]);
 
@@ -102,7 +104,17 @@ function AdminProducts() {
   };
 
   if (loading) {
-    return <TableSkeleton rows={5} columns={8} />;
+    return (
+      <>
+        {/* MOBILE */}
+        <CardSkeleton cards={3} />
+
+        {/* DESKTOP */}
+        <div className="hidden md:block">
+          <TableSkeleton rows={6} columns={6} />
+        </div>
+      </>
+    );
   }
 
   return (

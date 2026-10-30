@@ -10,6 +10,8 @@ import EditCategory from "./EditCategory";
 
 import TableSkeleton from "../components/TableSkeleton";
 
+import CardSkeleton from "../components/CardSkeleton";
+
 function AdminCategories() {
   const [categories, setCategories] = useState([]);
 
@@ -63,7 +65,17 @@ function AdminCategories() {
   };
 
   if (loading) {
-    return <TableSkeleton rows={3} columns={3} />;
+    return (
+      <>
+        {/* MOBILE */}
+        <CardSkeleton cards={3} />
+
+        {/* DESKTOP */}
+        <div className="hidden md:block">
+          <TableSkeleton rows={6} columns={6} />
+        </div>
+      </>
+    );
   }
 
   return (

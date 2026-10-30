@@ -2,6 +2,8 @@ import { useEffect, useState, useRef } from "react";
 
 import API from "../services/api";
 
+import DashboardSkeleton from "../components/DashboardSkeleton";
+
 import {
   BarChart,
   Bar,
@@ -36,7 +38,12 @@ function AdminDashboard() {
 
     onDeliveryOrders: 0,
   });
-  const years = [2024, 2025, 2026, 2027];
+  const currentYear = new Date().getFullYear();
+
+  const years = Array.from(
+    { length: currentYear - 2024 + 1 },
+    (_, index) => 2024 + index,
+  );
   const [openYear, setOpenYear] = useState(false);
 
   const yearRef = useRef(null);
@@ -116,18 +123,7 @@ function AdminDashboard() {
   }, [selectedYear]);
 
   if (loading) {
-    return (
-      <p
-        className="
-      text-center
-      mt-10
-      text-primary
-      font-bold
-      "
-      >
-        Loading dashboard...
-      </p>
-    );
+    return <DashboardSkeleton />;
   }
 
   const cards = [
@@ -231,101 +227,6 @@ mt-2
           >
             Monitor your store performance
           </p>
-        </div>
-
-        <div>
-          <p
-            className="
-text-xs
-text-accent
-mb-1
-font-medium
-"
-          >
-            Select Year
-          </p>
-
-          <div ref={yearRef} className="relative">
-            <button
-              onClick={() => setOpenYear(!openYear)}
-              className="
-      w-32
-      bg-white
-      border
-      border-secondary
-      rounded-xl
-      px-5
-      py-3
-      text-md
-      text-primary
-      font-semibold
-      shadow-sm
-      flex
-      items-center
-      justify-between
-      hover:border-accent
-      transition
-    "
-            >
-              <span>{selectedYear}</span>
-
-              <span
-                className={`
-        text-accent
-        transition
-        ${openYear ? "rotate-180" : ""}
-      `}
-              >
-                ˅
-              </span>
-            </button>
-
-            {openYear && (
-              <div
-                className="
-        absolute
-        top-full
-        mt-2
-        w-32
-        bg-white
-        border
-        border-secondary
-        rounded-xl
-        shadow-xl
-        overflow-hidden
-        z-50
-      "
-              >
-                {years.map((year) => (
-                  <button
-                    key={year}
-                    onClick={() => {
-                      setSelectedYear(year);
-
-                      setOpenYear(false);
-                    }}
-                    className={`
-              w-full
-              text-left
-              px-5
-              py-3
-              font-medium
-              transition
-
-              ${
-                selectedYear === year
-                  ? "bg-secondary text-primary font-bold"
-                  : "text-muted hover:bg-accent/10 hover:text-primary"
-              }
-
-            `}
-                  >
-                    {year}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
         </div>
       </div>
 
@@ -432,35 +333,140 @@ mt-10
 
         <div
           className="
-bg-white
-border
-border-secondary
-rounded-2xl
-shadow-sm
-p-6
-"
+    bg-white
+    border
+    border-secondary
+    rounded-2xl
+    shadow-sm
+    p-6
+  "
         >
-          <h2
+          <div
             className="
-text-xl
-font-bold
-text-primary
-mb-6
-"
+      flex
+      flex-col
+      sm:flex-row
+      sm:items-end
+      sm:justify-between
+      gap-4
+      mb-6
+    "
           >
-            Completed Orders - {selectedYear}
-          </h2>
+            <h2
+              className="
+        text-xl
+        font-bold
+        text-primary
+      "
+            >
+              Completed Orders - {selectedYear}
+            </h2>
+
+            {/* YEAR DROPDOWN */}
+            <div>
+              <p
+                className="
+          text-xs
+          text-accent
+          mb-1
+          font-medium
+        "
+              >
+                Select Year
+              </p>
+
+              <div ref={yearRef} className="relative">
+                <button
+                  type="button"
+                  onClick={() => setOpenYear((prev) => !prev)}
+                  className="
+            w-32
+            bg-white
+            border
+            border-secondary
+            rounded-xl
+            px-5
+            py-3
+            text-md
+            text-primary
+            font-semibold
+            shadow-sm
+            flex
+            items-center
+            justify-between
+            hover:border-accent
+            transition
+          "
+                >
+                  <span>{selectedYear}</span>
+
+                  <span
+                    className={`
+              text-accent
+              transition-transform
+              duration-200
+              ${openYear ? "rotate-180" : "rotate-0"}
+            `}
+                  >
+                    ˅
+                  </span>
+                </button>
+
+                {openYear && (
+                  <div
+                    className="
+              absolute
+              right-0
+              top-full
+              mt-2
+              w-32
+              bg-white
+              border
+              border-secondary
+              rounded-xl
+              shadow-xl
+              overflow-hidden
+              z-50
+            "
+                  >
+                    {years.map((year) => (
+                      <button
+                        type="button"
+                        key={year}
+                        onClick={() => {
+                          setSelectedYear(year);
+                          setOpenYear(false);
+                        }}
+                        className={`
+                  w-full
+                  text-left
+                  px-5
+                  py-3
+                  font-medium
+                  transition
+
+                  ${
+                    selectedYear === year
+                      ? "bg-secondary text-primary font-bold"
+                      : "text-muted hover:bg-accent/10 hover:text-primary"
+                  }
+                `}
+                      >
+                        {year}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
 
           <ResponsiveContainer width="100%" height={350}>
             <BarChart data={monthlyOrders}>
               <CartesianGrid strokeDasharray="3 3" />
-
               <XAxis dataKey="month" />
-
               <YAxis />
-
               <Tooltip />
-
               <Bar dataKey="orders" fill="#71845a" />
             </BarChart>
           </ResponsiveContainer>

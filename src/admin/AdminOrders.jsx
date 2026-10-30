@@ -6,6 +6,7 @@ import API from "../services/api";
 import Modal from "../components/Modal";
 import TableSkeleton from "../components/TableSkeleton";
 import OrderDetailsModal from "./OrderDetailsModal";
+import CardSkeleton from "../components/CardSkeleton";
 
 function AdminOrders() {
   const [orders, setOrders] = useState([]);
@@ -186,7 +187,17 @@ function AdminOrders() {
   }, [currentPage, searchQuery, statusFilter]);
 
   if (loading) {
-    return <TableSkeleton rows={6} columns={6} />;
+    return (
+      <>
+        {/* MOBILE */}
+        <CardSkeleton cards={3} />
+
+        {/* DESKTOP */}
+        <div className="hidden md:block">
+          <TableSkeleton rows={6} columns={6} />
+        </div>
+      </>
+    );
   }
 
   return (
